@@ -22,6 +22,8 @@ def winner_takes_all(proposed_vertex_states, proposed_agent_updates, vertex):
 def task_claiming_resolution(proposed_vertex_states, proposed_agent_updates, vertex):
 	if not vertex.state.is_task:
 		return naive_resolution(proposed_vertex_states, proposed_agent_updates, vertex)
+	else:
+		vertex.state.cf_mkr += 2
 	agents = list(proposed_agent_updates.keys())
 	contenders = []
 	available_slots = vertex.state.residual_demand

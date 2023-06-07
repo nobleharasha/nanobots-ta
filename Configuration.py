@@ -145,6 +145,9 @@ class Configuration:
 			# Update vertex state
 			vertex.state = new_vertex_state
 
+			if vertex.state.is_task:
+				vertex.state.cf_mkr += 1
+
 			# Update agents
 			for agent_id in new_agent_updates:
 				agent = self.agents[agent_id]

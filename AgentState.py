@@ -1,4 +1,4 @@
-import random 
+import random
 from constants import L
 
 class AgentState:
@@ -22,11 +22,6 @@ class AgentState:
 
 		#Commitment
 		self.committed_task = None
-		
-		
 
 
-
-
-
-	
+		self.nomkr_ctr = 0

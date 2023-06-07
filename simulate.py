@@ -84,6 +84,7 @@ def main():
             tot_rd += task.residual_demand
         residual_demand_over_time.append(tot_rd)
     #(len(residual_demand_over_time))
+    print(ct)
 
     # plt.plot(residual_demand_over_time)
     # plt.savefig("residual_demand_over_time.pdf")

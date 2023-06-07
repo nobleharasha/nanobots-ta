@@ -3,8 +3,10 @@ from geo_utils import *
 import random
 from math import pi, floor
 from constants import *
+from scipy.interpolate import interp1d
 from scipy.stats import levy
 import copy
+from Vertex import *
 
 class Agent:
 	def __init__(self,agent_id, vertex, l=L):
@@ -54,28 +56,114 @@ class Agent:
 
 
 
-	def generate_transition(self,local_vertex_mapping):
+	def generate_transition(self, local_vertex_mapping):
+		CF_THRESHHOLD = 10
+
 		new_agent_state = copy.copy(self.state)
 
-		nearby_task = self.find_nearby_task(local_vertex_mapping)
-		if nearby_task is not None:
-			self.location.state.marker += 1
-		elif sum([x.state.marker for x in list(local_vertex_mapping.values())]) > 5:
-			self.location.state.marker += 1
+		if new_agent_state.committed_task:
+			new_dir = "S"
+			self.location.state.cf_mkr += 1
+		elif self.location.state.is_task and self.location.state.residual_demand > 0:
+			new_agent_state.committed_task = True
+			new_dir = "S"
+			self.location.state.cf_mkr += 1
+			self.location.state.residual_demand -= 1
+		elif new_agent_state.destination_task is not None:
+			if self.location.state.is_home:
+				new_agent_state.destination_task = None
+				new_agent_state.nomkr_ctr = 0
+				new_dir = "S"
+			else:
+				new_dir = get_direction_from_destination(new_agent_state.destination_task.coords(), self.location.coords())
 
-		dirs = ["S", "L", "R", "U", "D"]
-		dirs_to_dxdy = {"S": (0,0), "L": (-1,0), "R":(1,0), "U": (0,1), "D": (0,-1)}
-		probs = []
-		for d in dirs:
-			try:
-				probs.append(local_vertex_mapping[dirs_to_dxdy[d]].state.marker+1)
-			except:
-				probs.append(0)
-		probs_norm = [x / sum(probs) for x in probs]
+			if self.location.state.is_task:
+				self.location.state.cf_mkr += 1
+			elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ ****  ARBITRARY PARAM
+				self.location.state.cf_mkr += 1
+		elif new_agent_state.nomkr_ctr >= 30: ##&@(^%^$#%(^@&!$)) ******** ___________ ------ ***** ARBITRARY PARAM
+			new_agent_state.destination_task = Vertex(HOME_LOC[0][0] + int((HOME_LOC[1][0] - HOME_LOC[0][0]) / 2), HOME_LOC[0][1] + int((HOME_LOC[1][1] - HOME_LOC[0][1]) / 2))
+			new_dir = "S"
 
-		dir = random.choices(dirs, weights=probs_norm)
-		#print(dir)
-		return self.location.state, new_agent_state, dir[0]
+			if self.location.state.is_task:
+				self.location.state.cf_mkr += 1
+			elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ **** ARBITRARY PARAM
+				self.location.state.cf_mkr += 1
+		else:
+			dxdy_to_dir = {(0,0): "S", (0,1): "U", (0,-1): "D", (1,0): "R", (-1, 0): "L"}
+			dirs = []
+			probs = []
+			mkr_max = 0
+			for dxdy in local_vertex_mapping:
+				try:
+					dir = dxdy_to_dir[dxdy]
+					mkr_ct = local_vertex_mapping[dxdy].state.cf_mkr
+					if mkr_ct > mkr_max:
+						mkr_max = mkr_ct
+				except:
+					pass
+
+			if mkr_max == 0:
+				new_dir = self.get_travel_direction(new_agent_state)
+				#new_agent_state.nomkr_ctr += 1
+			else:
+				new_agent_state.nomkr_ctr = 0
+
+
+				# for dxdy in local_vertex_mapping:
+				# 	try:
+				# 		dir = dxdy_to_dir[dxdy]
+				# 		#dirs.append(dir)
+				# 		vtx = local_vertex_mapping[dxdy]
+				# 		mkr_ct = vtx.state.cf_mkr
+				# 		if mkr_ct == mkr_max:
+				# 			new_dir = dir
+				# 			break
+				# 	except:
+				# 		pass
+
+
+				m = interp1d([0,mkr_max], [1/5,1/2])
+
+				for dxdy in local_vertex_mapping:
+					try:
+						dir = dxdy_to_dir[dxdy]
+						dirs.append(dir)
+						vtx = local_vertex_mapping[dxdy]
+						mkr_ct = vtx.state.cf_mkr
+						probs.append(float(m(mkr_ct)))
+					except:
+						pass
+
+				new_dir = random.choices(dirs, weights=probs, k=1)[0]
+
+			if self.location.state.is_task:
+				self.location.state.cf_mkr += 1
+			elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ ****   10 IS ARBITRARY
+				self.location.state.cf_mkr += 1
+
+
+		return self.location.state, new_agent_state, new_dir
+
+
+
+
+
+
+
+		# dirs = ["S", "L", "R", "U", "D"]
+		# dirs_to_dxdy = {"S": (0,0), "L": (-1,0), "R":(1,0), "U": (0,1), "D": (0,-1)}
+		# probs = []
+		# for d in dirs:
+		# 	try:
+		# 		probs.append(local_vertex_mapping[dirs_to_dxdy[d]].state.marker+1)
+		# 	except:
+		# 		probs.append(0)
+		# probs_norm = [x / sum(probs) for x in probs]
+		#
+		# dir = random.choices(dirs, weights=probs_norm)
+		# #print(dir)
+		# return self.location.state, new_agent_state, dir[0]
 
 
 		# # We are not headed towards a task or doing a task
