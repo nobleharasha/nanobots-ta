@@ -135,3 +135,8 @@ def within_bounds(x,y, site=None):
 		if x >= site.site_location[0][0] and x <= site.site_location[0][1] and y >= site.site_location[1][0] and y <= site.site_location[1][1]:
 			return True
 		return False
+
+
+
+dir_to_dxdy = {"S": (0,0), "U": (0,1), "D": (0,-1), "L": (-1,0), "R": (0,1)}
+dxdy_to_dir = {(0,0): "S", (0,1): "U", (0,-1): "D", (1,0): "R", (-1, 0): "L"}

@@ -57,93 +57,161 @@ class Agent:
 
 
 	def generate_transition(self, local_vertex_mapping):
-		CF_THRESHHOLD = 10
-
 		new_agent_state = copy.copy(self.state)
 
-		if new_agent_state.committed_task:
+		if new_agent_state.committed_task is not None:
 			new_dir = "S"
-			self.location.state.cf_mkr += 1
-		elif self.location.state.is_task and self.location.state.residual_demand > 0:
-			new_agent_state.committed_task = True
-			new_dir = "S"
-			self.location.state.cf_mkr += 1
-			self.location.state.residual_demand -= 1
-		elif new_agent_state.destination_task is not None:
-			if self.location.state.is_home:
-				new_agent_state.destination_task = None
-				new_agent_state.nomkr_ctr = 0
+		else:
+			if random.random() <= (1-p_e) and self.location.state.c > 0 and self.location.state.residual_demand > 0:
+				self.location.state.residual_demand -= 1
+				new_agent_state.committed_task = self.location
 				new_dir = "S"
 			else:
-				new_dir = get_direction_from_destination(new_agent_state.destination_task.coords(), self.location.coords())
+				dirs = []
 
-			if self.location.state.is_task:
-				self.location.state.cf_mkr += 1
-			elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ ****  ARBITRARY PARAM
-				self.location.state.cf_mkr += 1
-		elif new_agent_state.nomkr_ctr >= 30: ##&@(^%^$#%(^@&!$)) ******** ___________ ------ ***** ARBITRARY PARAM
-			new_agent_state.destination_task = Vertex(HOME_LOC[0][0] + int((HOME_LOC[1][0] - HOME_LOC[0][0]) / 2), HOME_LOC[0][1] + int((HOME_LOC[1][1] - HOME_LOC[0][1]) / 2))
-			new_dir = "S"
+				dxdy_to_c = {}
+				dxdy_to_cf = {}
+				for dx in [-1,0,1]:
+					for dy in [-1,0,1]:
+						try:
+							dxdy_to_c[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c
+							if random.random() <= p_e:
+								dxdy_to_c[(dx,dy)] = 0
+							dxdy_to_cf[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c_f
+							if (dx,dy) == (0,0):
+								dirs.append("S")
+							elif (dx,dy) == (0,1):
+								dirs.append("U")
+							elif (dx,dy) == (0,-1):
+								dirs.append("D")
+							elif (dx,dy) == (1,0):
+								dirs.append("R")
+							elif (dx,dy) == (-1,0):
+								dirs.append("L")
+						except:
+							pass
 
-			if self.location.state.is_task:
-				self.location.state.cf_mkr += 1
-			elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ **** ARBITRARY PARAM
-				self.location.state.cf_mkr += 1
-		else:
-			dxdy_to_dir = {(0,0): "S", (0,1): "U", (0,-1): "D", (1,0): "R", (-1, 0): "L"}
-			dirs = []
-			probs = []
-			mkr_max = 0
-			for dxdy in local_vertex_mapping:
-				try:
-					dir = dxdy_to_dir[dxdy]
-					mkr_ct = local_vertex_mapping[dxdy].state.cf_mkr
-					if mkr_ct > mkr_max:
-						mkr_max = mkr_ct
-				except:
-					pass
+				if sum(list(dxdy_to_c.values())) > 0:
+					new_dir = "S"
+					for dir in dirs:
+						if dxdy_to_c[dir_to_dxdy[dir]] > 0:
+							new_dir = dir
+					self.location.state.c_f += a
+				elif sum(list(dxdy_to_cf.values())) > 0:
+					probs = []
+					for dir in dirs:
+						probs.append(f([ dxdy_to_cf[dir_to_dxdy[dir]] ]) + k)
+					probs = [float(x) / sum(probs) for x in probs]
+					new_dir = random.choices(dirs, weights=probs, k=1)[0]
+					if sum(list(dxdy_to_cf.values())) >= alpha:
+						self.location.state.c_f += a
+				else:
+					new_dir = self.get_travel_direction(new_agent_state)
 
-			if mkr_max == 0:
-				new_dir = self.get_travel_direction(new_agent_state)
-				#new_agent_state.nomkr_ctr += 1
-			else:
-				new_agent_state.nomkr_ctr = 0
-
-
-				# for dxdy in local_vertex_mapping:
-				# 	try:
-				# 		dir = dxdy_to_dir[dxdy]
-				# 		#dirs.append(dir)
-				# 		vtx = local_vertex_mapping[dxdy]
-				# 		mkr_ct = vtx.state.cf_mkr
-				# 		if mkr_ct == mkr_max:
-				# 			new_dir = dir
-				# 			break
-				# 	except:
-				# 		pass
-
-
-				m = interp1d([0,mkr_max], [1/5,1/2])
-
+			if random.random() <= p_m:
+				dirs = []
 				for dxdy in local_vertex_mapping:
 					try:
-						dir = dxdy_to_dir[dxdy]
-						dirs.append(dir)
-						vtx = local_vertex_mapping[dxdy]
-						mkr_ct = vtx.state.cf_mkr
-						probs.append(float(m(mkr_ct)))
+						dirs.append(dxdy_to_dir[dxdy])
 					except:
 						pass
-
-				new_dir = random.choices(dirs, weights=probs, k=1)[0]
-
-			if self.location.state.is_task:
-				self.location.state.cf_mkr += 1
-			elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ ****   10 IS ARBITRARY
-				self.location.state.cf_mkr += 1
+				new_dir = random.choice(dirs)
 
 
 		return self.location.state, new_agent_state, new_dir
+
+
+
+
+
+
+
+
+
+
+		# if new_agent_state.committed_task:
+		# 	new_dir = "S"
+		# 	self.location.state.cf_mkr += 1
+		# elif self.location.state.is_task and self.location.state.residual_demand > 0:
+		# 	new_agent_state.committed_task = True
+		# 	new_dir = "S"
+		# 	self.location.state.cf_mkr += 1
+		# 	self.location.state.residual_demand -= 1
+		# elif new_agent_state.destination_task is not None:
+		# 	if self.location.state.is_home:
+		# 		new_agent_state.destination_task = None
+		# 		new_agent_state.nomkr_ctr = 0
+		# 		new_dir = "S"
+		# 	else:
+		# 		new_dir = get_direction_from_destination(new_agent_state.destination_task.coords(), self.location.coords())
+		#
+		# 	if self.location.state.is_task:
+		# 		self.location.state.cf_mkr += 1
+		# 	elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ ****  ARBITRARY PARAM
+		# 		self.location.state.cf_mkr += 1
+		# elif new_agent_state.nomkr_ctr >= 30: ##&@(^%^$#%(^@&!$)) ******** ___________ ------ ***** ARBITRARY PARAM
+		# 	new_agent_state.destination_task = Vertex(HOME_LOC[0][0] + int((HOME_LOC[1][0] - HOME_LOC[0][0]) / 2), HOME_LOC[0][1] + int((HOME_LOC[1][1] - HOME_LOC[0][1]) / 2))
+		# 	new_dir = "S"
+		#
+		# 	if self.location.state.is_task:
+		# 		self.location.state.cf_mkr += 1
+		# 	elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ **** ARBITRARY PARAM
+		# 		self.location.state.cf_mkr += 1
+		# else:
+		# 	dxdy_to_dir = {(0,0): "S", (0,1): "U", (0,-1): "D", (1,0): "R", (-1, 0): "L"}
+		# 	dirs = []
+		# 	probs = []
+		# 	mkr_max = 0
+		# 	for dxdy in local_vertex_mapping:
+		# 		try:
+		# 			dir = dxdy_to_dir[dxdy]
+		# 			mkr_ct = local_vertex_mapping[dxdy].state.cf_mkr
+		# 			if mkr_ct > mkr_max:
+		# 				mkr_max = mkr_ct
+		# 		except:
+		# 			pass
+		#
+		# 	if mkr_max == 0:
+		# 		new_dir = self.get_travel_direction(new_agent_state)
+		# 		#new_agent_state.nomkr_ctr += 1
+		# 	else:
+		# 		new_agent_state.nomkr_ctr = 0
+		#
+		#
+		# 		# for dxdy in local_vertex_mapping:
+		# 		# 	try:
+		# 		# 		dir = dxdy_to_dir[dxdy]
+		# 		# 		#dirs.append(dir)
+		# 		# 		vtx = local_vertex_mapping[dxdy]
+		# 		# 		mkr_ct = vtx.state.cf_mkr
+		# 		# 		if mkr_ct == mkr_max:
+		# 		# 			new_dir = dir
+		# 		# 			break
+		# 		# 	except:
+		# 		# 		pass
+		#
+		#
+		# 		m = interp1d([0,mkr_max], [1/5,1/2])
+		#
+		# 		for dxdy in local_vertex_mapping:
+		# 			try:
+		# 				dir = dxdy_to_dir[dxdy]
+		# 				dirs.append(dir)
+		# 				vtx = local_vertex_mapping[dxdy]
+		# 				mkr_ct = vtx.state.cf_mkr
+		# 				probs.append(float(m(mkr_ct)))
+		# 			except:
+		# 				pass
+		#
+		# 		new_dir = random.choices(dirs, weights=probs, k=1)[0]
+		#
+		# 	if self.location.state.is_task:
+		# 		self.location.state.cf_mkr += 1
+		# 	elif sum([x.state.cf_mkr for x in list(local_vertex_mapping.values())]) > CF_THRESHHOLD: #%^@#(&*%^#@ -----______ ****   10 IS ARBITRARY
+		# 		self.location.state.cf_mkr += 1
+		#
+		#
+		# return self.location.state, new_agent_state, new_dir
 
 
 

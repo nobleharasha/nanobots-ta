@@ -3,7 +3,7 @@ from Agent import Agent
 from Vertex import Vertex
 from geo_utils import generate_local_mapping, get_coords_from_movement
 from res_utils import *
-from constants import INFLUENCE_RADIUS
+from constants import INFLUENCE_RADIUS, t
 import time
 
 """
@@ -146,7 +146,7 @@ class Configuration:
 			vertex.state = new_vertex_state
 
 			if vertex.state.is_task:
-				vertex.state.cf_mkr += 1
+				vertex.state.c += t
 
 			# Update agents
 			for agent_id in new_agent_updates:

@@ -32,3 +32,12 @@ levy_cap = 1/L
 
 TMR_DNS = .5
 TMR_DST = (min(M, N) / 2) * .6
+
+
+t = 1
+a = 1
+alpha = 25
+p_e = 0.9
+p_m = 0.05
+f = lambda l : sum(l)
+k = 2
