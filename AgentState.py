@@ -24,4 +24,6 @@ class AgentState:
 		self.committed_task = None
 
 
-		self.nomkr_ctr = 0
+		self.ctr = 0
+		self.found_task = False
+		self.mode = "E"

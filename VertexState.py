@@ -7,4 +7,6 @@ class VertexState:
 		self.residual_demand = demand
 		self.task_location = task_location
 
-		self.cf_mkr = 0
+		self.c = 0
+		self.c_f = 0
+		self.h_f = 0
