@@ -61,6 +61,7 @@ class Agent:
 
 		if new_agent_state.committed_task is not None:
 			new_dir = "S"
+			self.location.state.c_f += a
 		else:
 			if random.random() <= (1-p_e) and self.location.state.c > 0 and self.location.state.residual_demand > 0:
 				self.location.state.residual_demand -= 1
@@ -108,14 +109,14 @@ class Agent:
 				else:
 					new_dir = self.get_travel_direction(new_agent_state)
 
-			if random.random() <= p_m:
-				dirs = []
-				for dxdy in local_vertex_mapping:
-					try:
-						dirs.append(dxdy_to_dir[dxdy])
-					except:
-						pass
-				new_dir = random.choice(dirs)
+				if random.random() <= p_m:
+					dirs = []
+					for dxdy in local_vertex_mapping:
+						try:
+							dirs.append(dxdy_to_dir[dxdy])
+						except:
+							pass
+					new_dir = random.choice(dirs)
 
 
 		return self.location.state, new_agent_state, new_dir
