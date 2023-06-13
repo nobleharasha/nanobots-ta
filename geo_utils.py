@@ -140,3 +140,8 @@ def within_bounds(x,y, site=None):
 
 dir_to_dxdy = {"S": (0,0), "U": (0,1), "D": (0,-1), "L": (-1,0), "R": (1,0)}
 dxdy_to_dir = {(0,0): "S", (0,1): "U", (0,-1): "D", (1,0): "R", (-1, 0): "L"}
+
+
+def signal_amt(curr_loc, beac_loc):
+	dist = l2_distance(curr_loc[0], curr_loc[1], beac_loc[0], beac_loc[1])
+	return max(0, -1 * (dist**4 / 1000) + 1)

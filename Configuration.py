@@ -1,9 +1,9 @@
 import multiprocessing as mp
 from Agent import Agent
 from Vertex import Vertex
-from geo_utils import generate_local_mapping, get_coords_from_movement
+from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt
 from res_utils import *
-from constants import INFLUENCE_RADIUS, t
+from constants import INFLUENCE_RADIUS
 import time
 
 """
@@ -66,6 +66,7 @@ class Configuration:
 		self.M = M
 		self.influence_radius = INFLUENCE_RADIUS # make this a class variable later; radius 0 means only self is influenced
 		self.agents = {} # map from id to agent itself
+		self.drug_visits_peragent = {}
 		self.pool = pool
 
 
@@ -75,6 +76,7 @@ class Configuration:
 			location = self.vertices[agent_locations[agent_id]]
 			agent = Agent(agent_id, location)
 			self.agents[agent_id] = agent
+			self.drug_visits_peragent[agent_id] = 0
 			location.agents.add(agent)
 
 	def reset_agent_locations(self, agent_locations):
@@ -111,7 +113,7 @@ class Configuration:
 	local_vertex_mapping: dict
 		mapping from local coordinates to the vertices at those coordiantes
 	"""
-	def delta(self,local_vertex_mapping):
+	def delta(self, local_vertex_mapping):
 		vertex = local_vertex_mapping[(0,0)]
 
 		if len(vertex.agents) == 0:
@@ -121,6 +123,13 @@ class Configuration:
 		# vertex state, agent state, and direction of motion
 		proposed_vertex_states = {}
 		proposed_agent_updates = {}
+
+		# global_beacon_locations = set()
+		# for x in range(0, self.M):
+		# 	for y in range(0, self.N):
+		# 		for a in self.vertices[(x,y)].agents:
+		# 			if a.state.mode == "S":
+		# 				global_beacon_locations.add((x,y))
 
 		for agent in vertex.agents:
 			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping)
@@ -138,6 +147,13 @@ class Configuration:
 	global state
 	"""
 	def execute_transition(self,global_transitory):
+		beacon_locs = set()
+		for x in range(0, self.M):
+			for y in range(0, self.N):
+				for a in self.vertices[(x,y)].agents:
+					if a.state.mode == "S":
+						beacon_locs.add((x,y))
+
 		for x,y in global_transitory.keys():
 			vertex = self.vertices[(x,y)]
 			new_vertex_state, new_agent_updates = global_transitory[(x,y)]
@@ -145,8 +161,15 @@ class Configuration:
 			# Update vertex state
 			vertex.state = new_vertex_state
 
-			if vertex.state.is_task:
-				vertex.state.c += t
+
+			signal = 0
+			for beac_loc in beacon_locs:
+				signal += signal_amt((x,y), beac_loc)
+			vertex.state.sig = signal
+
+
+			# if vertex.state.is_task:
+			# 	vertex.state.c += t
 
 			# Update agents
 			for agent_id in new_agent_updates:

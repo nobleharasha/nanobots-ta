@@ -7,23 +7,18 @@ class AgentState:
 		self.reset(agent_id, vertex, l)
 
 	def reset(self, agent_id, vertex, l):
-		# Initial Parameters
+		# Initial parameters
 		self.id = agent_id
 		self.L = l
 
-		#Random Walk Parameters
+		# Levy parameters
 		self.angle = 0
 		self.starting_point = (vertex.x, vertex.y)
 		self.travel_distance = 0
 		self.levy_cap = 1/l
 
-		#Destination Travel Parameters
-		self.destination_task = None
+		self.mode = "E"  # {"E", "D", "P", "S"} = {"Explore", "Deliver Drug", "Propagate", "Stationary"}
+		self.ct = 0
+		self.prop_time = 0
 
-		#Commitment
-		self.committed_task = None
-
-
-		self.ctr = 0
-		self.found_task = False
-		self.mode = "E"
+		self.prev = ("S", 0)

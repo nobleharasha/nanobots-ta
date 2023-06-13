@@ -9,11 +9,11 @@ M = 50
 HOME_LOC = ((24, 26), (24, 26))
 
 #Tasks and Agents
-NUM_AGENTS = 50
+NUM_AGENTS = 30
 K = 0.8
 TOTAL_DEMAND = int(NUM_AGENTS*K)
 #NUM_TASKS = 4
-NUM_TASKS = 30
+NUM_TASKS = 15
 EXPECTED_DEMAND_PER_TASK = TOTAL_DEMAND/NUM_TASKS
 assert(NUM_TASKS >= 1)
 assert(EXPECTED_DEMAND_PER_TASK >= 1)
@@ -31,16 +31,13 @@ levy_cap = 1/L
 
 
 TMR_DNS = .4
-TMR_DST = (min(M, N) / 2) * .75
+TMR_DST = (min(M, N) / 2) * .7
 
 
-t = 1
-a = 1
-b = 1
-alpha = 25
-p_e = 0.01
-p_m = 0.1
-p_c = 0.6
-f = lambda l : l[0]
-k = 4
-T = 30
+T = 10
+
+ALPHA = 0.5
+
+EPSILON = 0.1
+
+p_m = 0.05

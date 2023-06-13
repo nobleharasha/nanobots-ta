@@ -1,5 +1,16 @@
 import pygame
 import sys
+from scipy.interpolate import interp1d
+from geo_utils import signal_amt
+from random import uniform
+from constants import HOME_LOC, TMR_DST
+from math import pi, cos, sin
+
+home_center = (HOME_LOC[0][0] + int((HOME_LOC[1][0] - HOME_LOC[0][0]) / 2), HOME_LOC[0][1] + int((HOME_LOC[1][1] - HOME_LOC[0][1]) / 2))
+ang = uniform(0, 2*pi)
+tumor_start = (int(home_center[0] + cos(ang)*TMR_DST), int(home_center[1] + sin(ang)*TMR_DST))
+
+
 
 class ViewController:
 	BLACK = (0, 0, 0)
@@ -9,7 +20,8 @@ class ViewController:
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
 	VERTEX_SIZE = 17
-	FPS = 10
+	FPS = 15
+	#FPS = 60
 
 	def __init__(self, configuration):
 		self.configuration = configuration
@@ -30,30 +42,40 @@ class ViewController:
 		pygame.display.update()
 
 	def draw_configuration(self):
+		beacon_locs = set()
+		for x in range(0, self.configuration.M):
+			for y in range(0, self.configuration.N):
+				for a in self.configuration.vertices[(x,y)].agents:
+					if a.state.mode == "S":
+						beacon_locs.add((x,y))
+
+		m = interp1d([0,4], [255,0], bounds_error=False, fill_value=(0,3))
+
 		for x in range(0, self.configuration.M):
 			for y in range(0, self.configuration.N):
 				rect = pygame.Rect(x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1, self.VERTEX_SIZE-2, self.VERTEX_SIZE-2)
-				num_agents = len(self.configuration.vertices[(x,y)].agents)
-				if num_agents > 0:
-					pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
-				elif self.configuration.vertices[(x,y)].state.c_f > 0:
-					col = 255 - (min(self.configuration.vertices[(x,y)].state.c_f / 10, 1) * 255)
-					pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
-					demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.c_f), True, self.BLACK)
-					self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
-				elif self.configuration.vertices[(x,y)].state.h_f > 0:
-					col = 255 - (min(self.configuration.vertices[(x,y)].state.h_f / 10, 1) * 255)
-					pygame.draw.rect(self.SCREEN, (255,col,col), rect, 0)
-					demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.h_f), True, self.BLACK)
-					self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
-				# elif num_agents > 0:
-				# 	pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
-				elif self.configuration.vertices[(x,y)].state.is_task:
+				num_active_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode == "E"])
+				num_beac_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode != "E"])
+				# signal = 0
+				# for beac_loc in beacon_locs:
+				# 	signal += signal_amt((x,y), beac_loc)
+				# self.configuration.vertices[(x,y)].state.sig = signal
+
+				# if (x,y) == tumor_start:
+				# 	pygame.draw.rect(self.SCREEN, self.BLACK, rect, 0)
+				if self.configuration.vertices[(x,y)].state.is_task:
 					pygame.draw.rect(self.SCREEN, self.YELLOW, rect, 0)
-					demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.residual_demand), True, self.BLACK)
-					self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
+					# demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.residual_demand), True, self.BLACK)
+					# self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
+				elif num_active_agents > 0:
+					pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
 				elif self.configuration.vertices[(x,y)].state.is_home:
 					pygame.draw.rect(self.SCREEN, self.RED, rect, 0)
+				elif num_beac_agents > 0:
+					pygame.draw.rect(self.SCREEN, self.BLACK, rect, 0)
+				elif self.configuration.vertices[(x,y)].state.sig > 0:
+					col = float(m(self.configuration.vertices[(x,y)].state.sig))
+					pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
 				else:
 					pygame.draw.rect(self.SCREEN, self.WHITE, rect, 0)
 

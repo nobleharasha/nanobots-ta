@@ -58,171 +58,183 @@ class Agent:
 
 	def generate_transition(self, local_vertex_mapping):
 		new_agent_state = copy.copy(self.state)
+		new_agent_state.ct += 1
 
-		if new_agent_state.committed_task is not None:
-			return self.location.state, new_agent_state, "S"
-		else:
-			if new_agent_state.mode == "E":
-				self.location.state.h_f += b
-				if random.random() <= (1-p_e) and self.location.state.c > 0:
-					if random.random() <= p_c and self.location.state.residual_demand > 0:
-						self.location.state.residual_demand -= 1
-						new_agent_state.committed_task = self.location
-						new_dir = "S"
-					else:
-						new_agent_state.found_task = True
-						new_dir = "S"
-						new_agent_state.ctr = T
-						new_agent_state.mode = "H"
-						return self.location.state, new_agent_state, new_dir
+		sig_tmp = self.location.state.sig
+		sig_tmp = max(0, random.uniform(sig_tmp - EPSILON, sig_tmp + EPSILON))
 
-						# dirs = []
-						# dxdy_to_c = {}
-						# dxdy_to_cf = {}
-						# for dx in [-1,0,1]:
-						# 	for dy in [-1,0,1]:
-						# 		try:
-						# 			dxdy_to_c[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c
-						# 			if random.random() <= p_e:
-						# 				dxdy_to_c[(dx,dy)] = 0
-						# 			dxdy_to_cf[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c_f
-						# 			if (dx,dy) == (0,0):
-						# 				dirs.append("S")
-						# 			elif (dx,dy) == (0,1):
-						# 				dirs.append("U")
-						# 			elif (dx,dy) == (0,-1):
-						# 				dirs.append("D")
-						# 			elif (dx,dy) == (1,0):
-						# 				dirs.append("R")
-						# 			elif (dx,dy) == (-1,0):
-						# 				dirs.append("L")
-						# 		except:
-						# 			pass
-						# if sum(list(dxdy_to_c.values())) > 0:
-						# 	new_loc_cands = []
-						# 	for dxdy in dxdy_to_c:
-						# 		if dxdy_to_c[dxdy] > 0:
-						# 			new_loc_cands.append( (self.location.coords()[0] + dxdy[0], self.location.coords()[1] + dxdy[1]) )
-						# 	new_loc = random.choice(new_loc_cands)
-						# 	new_dir = get_direction_from_destination(new_loc, self.location.coords())
-						# 	new_agent_state.found_task = True
-						# elif sum(list(dxdy_to_cf.values())) > 0:
-						# 	probs = []
-						# 	for dir in dirs:
-						# 		probs.append(f([ dxdy_to_cf[dir_to_dxdy[dir]] ]) + k)
-						# 	probs = [float(x) / sum(probs) for x in probs]
-						# 	new_dir = random.choices(dirs, weights=probs, k=1)[0]
-						# else:
-						# 	new_dir = self.get_travel_direction(new_agent_state)
-						# if random.random() <= p_m:
-						# 	dirs = []
-						# 	for dxdy in local_vertex_mapping:
-						# 		try:
-						# 			dirs.append(dxdy_to_dir[dxdy])
-						# 		except:
-						# 			pass
-						# 	new_dir = random.choice(dirs)
-
-				else:
-					dirs = []
-					dxdy_to_c = {}
-					dxdy_to_cf = {}
-					for dx in [-1,0,1]:
-						for dy in [-1,0,1]:
-							try:
-								dxdy_to_c[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c
-								if random.random() <= p_e:
-									dxdy_to_c[(dx,dy)] = 0
-								dxdy_to_cf[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c_f
-								if (dx,dy) == (0,0):
-									dirs.append("S")
-								elif (dx,dy) == (0,1):
-									dirs.append("U")
-								elif (dx,dy) == (0,-1):
-									dirs.append("D")
-								elif (dx,dy) == (1,0):
-									dirs.append("R")
-								elif (dx,dy) == (-1,0):
-									dirs.append("L")
-							except:
-								pass
-					if sum(list(dxdy_to_c.values())) > 0:
-						new_loc_cands = []
-						for dxdy in dxdy_to_c:
-							if dxdy_to_c[dxdy] > 0:
-								new_loc_cands.append( (self.location.coords()[0] + dxdy[0], self.location.coords()[1] + dxdy[1]) )
-						new_loc = random.choice(new_loc_cands)
-						new_dir = get_direction_from_destination(new_loc, self.location.coords())
-						new_agent_state.found_task = True
-						new_agent_state.ctr = T
-						new_agent_state.mode = "H"
-						return self.location.state, new_agent_state, new_dir
-					elif sum(list(dxdy_to_cf.values())) > 0:
-						probs = []
-						for dir in dirs:
-							probs.append(f([ dxdy_to_cf[dir_to_dxdy[dir]] ]) + k)
-						probs = [float(x) / sum(probs) for x in probs]
-						new_dir = random.choices(dirs, weights=probs, k=1)[0]
-					else:
-						new_dir = self.get_travel_direction(new_agent_state)
-					if random.random() <= p_m:
-						dirs = []
-						for dxdy in local_vertex_mapping:
-							try:
-								dirs.append(dxdy_to_dir[dxdy])
-							except:
-								pass
-						new_dir = random.choice(dirs)
-
-				new_agent_state.ctr += 1
-				if new_agent_state.ctr >= T:
-					new_agent_state.mode = "H"
-					new_agent_state.ctr = 0
-
-				return self.location.state, new_agent_state, new_dir
+		if new_agent_state.mode == "S":
+			new_dir = "S"
+		elif new_agent_state.mode == "D":
+			new_dir = "S"
+			if new_agent_state.ct >= T:
+				new_agent_state.mode = "P"
+				new_agent_state.ct = 0
+				new_agent_state.prop_time = random.randrange(0, M/2)
+		elif new_agent_state.mode == "P":
+			if new_agent_state.ct >= new_agent_state.prop_time:
+				new_dir = "S"
+				new_agent_state.mode = "S"
+				new_agent_state.ct = 0
 			else:
-				if new_agent_state.found_task:
-					self.location.state.c_f += a
-
-				dirs = []
-				dxdy_to_hf = {}
-				for dx in [-1,0,1]:
-					for dy in [-1,0,1]:
-						try:
-							dxdy_to_hf[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.h_f
-							if (dx,dy) == (0,0):
-								dirs.append("S")
-							elif (dx,dy) == (0,1):
-								dirs.append("U")
-							elif (dx,dy) == (0,-1):
-								dirs.append("D")
-							elif (dx,dy) == (1,0):
-								dirs.append("R")
-							elif (dx,dy) == (-1,0):
-								dirs.append("L")
-						except:
-							pass
-				if sum(list(dxdy_to_hf.values())) > 0:
-					probs = []
-					for dir in dirs:
-						probs.append(f([ dxdy_to_hf[dir_to_dxdy[dir]] ]) + k)
-					probs = [float(x) / sum(probs) for x in probs]
-					new_dir = random.choices(dirs, weights=probs, k=1)[0]
+				new_dir = self.get_travel_direction(new_agent_state)
+		else:  # mode == "E"
+			if self.location.state.is_task:
+				new_dir = "S"
+				new_agent_state.mode = "D"
+				new_agent_state.ct = 0
+			else:
+				if sig_tmp > new_agent_state.prev[1]:
+					new_dir = new_agent_state.prev[0]
 				else:
 					new_dir = self.get_travel_direction(new_agent_state)
-				if random.random() <= p_m:
-					dirs = []
-					for dxdy in local_vertex_mapping:
-						try:
-							dirs.append(dxdy_to_dir[dxdy])
-						except:
-							pass
-					new_dir = random.choice(dirs)
 
-			new_agent_state.ctr += 1
-			if new_agent_state.ctr >= T:
-				new_agent_state.mode = "E"
-				new_agent_state.ctr = 0
-				new_agent_state.found_task = False
+				#new_dir = self.get_travel_direction(new_agent_state)
 
-			return self.location.state, new_agent_state, new_dir
+		if random.random() <= p_m:
+			dirs = []
+			for dxdy in local_vertex_mapping:
+				try:
+					dirs.append(dxdy_to_dir[dxdy])
+				except:
+					pass
+			new_dir = random.choice(dirs)
+
+		new_agent_state.prev = (new_dir, sig_tmp)
+		return self.location.state, new_agent_state, new_dir
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		# if new_agent_state.committed_task is not None:
+		# 	return self.location.state, new_agent_state, "S"
+		# else:
+		# 	if new_agent_state.mode == "E":
+		# 		self.location.state.h_f += b
+		# 		if random.random() <= (1-p_e) and self.location.state.c > 0:
+		# 			if random.random() <= p_c and self.location.state.residual_demand > 0:
+		# 				self.location.state.residual_demand -= 1
+		# 				new_agent_state.committed_task = self.location
+		# 				new_dir = "S"
+		# 			else:
+		# 				new_agent_state.found_task = True
+		# 				new_dir = "S"
+		# 				new_agent_state.ctr = T
+		# 				new_agent_state.mode = "H"
+		# 				return self.location.state, new_agent_state, new_dir
+		#
+		# 		else:
+		# 			dirs = []
+		# 			dxdy_to_c = {}
+		# 			dxdy_to_cf = {}
+		# 			for dx in [-1,0,1]:
+		# 				for dy in [-1,0,1]:
+		# 					try:
+		# 						dxdy_to_c[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c
+		# 						if random.random() <= p_e:
+		# 							dxdy_to_c[(dx,dy)] = 0
+		# 						dxdy_to_cf[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.c_f
+		# 						if (dx,dy) == (0,0):
+		# 							dirs.append("S")
+		# 						elif (dx,dy) == (0,1):
+		# 							dirs.append("U")
+		# 						elif (dx,dy) == (0,-1):
+		# 							dirs.append("D")
+		# 						elif (dx,dy) == (1,0):
+		# 							dirs.append("R")
+		# 						elif (dx,dy) == (-1,0):
+		# 							dirs.append("L")
+		# 					except:
+		# 						pass
+		# 			if sum(list(dxdy_to_c.values())) > 0:
+		# 				new_loc_cands = []
+		# 				for dxdy in dxdy_to_c:
+		# 					if dxdy_to_c[dxdy] > 0:
+		# 						new_loc_cands.append( (self.location.coords()[0] + dxdy[0], self.location.coords()[1] + dxdy[1]) )
+		# 				new_loc = random.choice(new_loc_cands)
+		# 				new_dir = get_direction_from_destination(new_loc, self.location.coords())
+		# 				new_agent_state.found_task = True
+		# 				new_agent_state.ctr = T
+		# 				new_agent_state.mode = "H"
+		# 				return self.location.state, new_agent_state, new_dir
+		# 			elif sum(list(dxdy_to_cf.values())) > 0:
+		# 				probs = []
+		# 				for dir in dirs:
+		# 					probs.append(f([ dxdy_to_cf[dir_to_dxdy[dir]] ]) + k)
+		# 				probs = [float(x) / sum(probs) for x in probs]
+		# 				new_dir = random.choices(dirs, weights=probs, k=1)[0]
+		# 			else:
+		# 				new_dir = self.get_travel_direction(new_agent_state)
+		# 			if random.random() <= p_m:
+		# 				dirs = []
+		# 				for dxdy in local_vertex_mapping:
+		# 					try:
+		# 						dirs.append(dxdy_to_dir[dxdy])
+		# 					except:
+		# 						pass
+		# 				new_dir = random.choice(dirs)
+		#
+		# 		new_agent_state.ctr += 1
+		# 		if new_agent_state.ctr >= T:
+		# 			new_agent_state.mode = "H"
+		# 			new_agent_state.ctr = 0
+		#
+		# 		return self.location.state, new_agent_state, new_dir
+		# 	else:
+		# 		if new_agent_state.found_task:
+		# 			self.location.state.c_f += a
+		#
+		# 		dirs = []
+		# 		dxdy_to_hf = {}
+		# 		for dx in [-1,0,1]:
+		# 			for dy in [-1,0,1]:
+		# 				try:
+		# 					dxdy_to_hf[(dx,dy)] = local_vertex_mapping[(dx,dy)].state.h_f
+		# 					if (dx,dy) == (0,0):
+		# 						dirs.append("S")
+		# 					elif (dx,dy) == (0,1):
+		# 						dirs.append("U")
+		# 					elif (dx,dy) == (0,-1):
+		# 						dirs.append("D")
+		# 					elif (dx,dy) == (1,0):
+		# 						dirs.append("R")
+		# 					elif (dx,dy) == (-1,0):
+		# 						dirs.append("L")
+		# 				except:
+		# 					pass
+		# 		if sum(list(dxdy_to_hf.values())) > 0:
+		# 			probs = []
+		# 			for dir in dirs:
+		# 				probs.append(f([ dxdy_to_hf[dir_to_dxdy[dir]] ]) + k)
+		# 			probs = [float(x) / sum(probs) for x in probs]
+		# 			new_dir = random.choices(dirs, weights=probs, k=1)[0]
+		# 		else:
+		# 			new_dir = self.get_travel_direction(new_agent_state)
+		# 		if random.random() <= p_m:
+		# 			dirs = []
+		# 			for dxdy in local_vertex_mapping:
+		# 				try:
+		# 					dirs.append(dxdy_to_dir[dxdy])
+		# 				except:
+		# 					pass
+		# 			new_dir = random.choice(dirs)
+		#
+		# 	new_agent_state.ctr += 1
+		# 	if new_agent_state.ctr >= T:
+		# 		new_agent_state.mode = "E"
+		# 		new_agent_state.ctr = 0
+		# 		new_agent_state.found_task = False
+		#
+		# 	return self.location.state, new_agent_state, new_dir
