@@ -20,7 +20,7 @@ class ViewController:
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
 	VERTEX_SIZE = 17
-	FPS = 30
+	FPS = 10
 	#FPS = 60
 
 	def __init__(self, configuration):
@@ -49,7 +49,7 @@ class ViewController:
 					if a.state.mode == "S":
 						beacon_locs.add((x,y))
 
-		m = interp1d([0,4], [255,0], bounds_error=False, fill_value=(0,3))
+		m = interp1d([0,4], [255,0], bounds_error=False, fill_value=(0,4))
 
 		for x in range(0, self.configuration.M):
 			for y in range(0, self.configuration.N):
