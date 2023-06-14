@@ -1,10 +1,11 @@
 import multiprocessing as mp
 from Agent import Agent
 from Vertex import Vertex
-from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt
+from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt, within_bounds, dir_to_dxdy
 from res_utils import *
-from constants import INFLUENCE_RADIUS
+from constants import INFLUENCE_RADIUS, p_m_markers
 import time
+from random import random, choice
 
 """
 Given a local vertex mapping, generate a proposed new vertex state and
@@ -75,6 +76,8 @@ class Configuration:
 		for agent_id in range(len(agent_locations)):
 			location = self.vertices[agent_locations[agent_id]]
 			agent = Agent(agent_id, location)
+			while agent_id in self.agents:
+				agent_id += 1
 			self.agents[agent_id] = agent
 			self.drug_visits_peragent[agent_id] = 0
 			location.agents.add(agent)
@@ -132,10 +135,11 @@ class Configuration:
 		# 				global_beacon_locations.add((x,y))
 
 		for agent in vertex.agents:
-			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping)
+			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping, self)
 
 			proposed_vertex_states[agent.state.id] = proposed_vertex_state
 			proposed_agent_updates[agent.state.id] = AgentTransition(proposed_agent_state, direction)
+
 
 
 		# Phase Two: Use a resolution rule to handle conflicting proposed vertex states
@@ -147,12 +151,12 @@ class Configuration:
 	global state
 	"""
 	def execute_transition(self,global_transitory):
-		beacon_locs = set()
-		for x in range(0, self.M):
-			for y in range(0, self.N):
-				for a in self.vertices[(x,y)].agents:
-					if a.state.mode == "S":
-						beacon_locs.add((x,y))
+		# beacon_locs = set()
+		# for x in range(0, self.M):
+		# 	for y in range(0, self.N):
+		# 		for a in self.vertices[(x,y)].agents:
+		# 			if a.state.mode == "S":
+		# 				beacon_locs.add((x,y))
 
 		for x,y in global_transitory.keys():
 			vertex = self.vertices[(x,y)]
@@ -162,14 +166,23 @@ class Configuration:
 			vertex.state = new_vertex_state
 
 
-			signal = 0
-			for beac_loc in beacon_locs:
-				signal += signal_amt((x,y), beac_loc)
-			vertex.state.sig = signal
+			# signal = 0
+			# for beac_loc in beacon_locs:
+			# 	signal += signal_amt((x,y), beac_loc)
+			# vertex.state.sig = signal
 
 
-			# if vertex.state.is_task:
-			# 	vertex.state.c += t
+			if random() <= p_m_markers and vertex.state.markers > 0:
+				vertex.state.markers = max(0, vertex.state.markers - 1)
+				dirs = []
+				for dir in ["S", "U", "D", "L", "R"]:
+					new_x, new_y = vertex.coords()[0] + dir_to_dxdy[dir][0], vertex.coords()[1] + dir_to_dxdy[dir][1]
+					if within_bounds(new_x, new_y):
+						dirs.append(dir)
+				new_dir = choice(dirs)
+				new_x, new_y = vertex.coords()[0] + dir_to_dxdy[new_dir][0], vertex.coords()[1] + dir_to_dxdy[new_dir][1]
+				self.vertices[(new_x, new_y)].state.markers += 1
+
 
 			# Update agents
 			for agent_id in new_agent_updates:

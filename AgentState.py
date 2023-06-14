@@ -19,6 +19,5 @@ class AgentState:
 
 		self.mode = "E"  # {"E", "D", "P", "S"} = {"Explore", "Deliver Drug", "Propagate", "Stationary"}
 		self.ct = 0
-		self.prop_time = 0
-
+		#self.prop_time = 0
 		self.prev = ("S", 0)

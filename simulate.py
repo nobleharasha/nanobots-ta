@@ -1,4 +1,4 @@
-graphics_on = True
+graphics_on = False
 
 if graphics_on:
     import pygame
@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def main(alphas):
+def main(alphas = []):
 
     configuration  = Configuration(N, M, TORUS)
     home = VertexState(is_home=True)
@@ -101,6 +101,9 @@ def main(alphas):
 
 if __name__ == "__main__":
 
+    # main()
+
+
     x = []
     y = []
     alphas = np.arange(0,1.001,.05)
@@ -126,7 +129,7 @@ if __name__ == "__main__":
     plt.xlabel('# Rounds')
     plt.ylabel('% Agents That Have Vistied Tumor')
     #plt.title('Effect of Task Density on Average (Propagator) Messages Sent')
-    plt.savefig("RW_alphasvruntimes_10trials.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.savefig("test_alphasvruntimes_10trials.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
     plt.show()
 
 

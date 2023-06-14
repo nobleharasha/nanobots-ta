@@ -7,4 +7,4 @@ class VertexState:
 		self.residual_demand = demand
 		self.task_location = task_location
 
-		self.sig = 0
+		self.markers = 0

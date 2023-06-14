@@ -35,9 +35,11 @@ TMR_DST = (min(M, N) / 2) * .7
 
 
 T = 10
+P = 15
 
 ALPHA = 0.5
 
-EPSILON = 0.1
+EPSILON = 0.05
 
 p_m = 0.05
+p_m_markers = 0.025
