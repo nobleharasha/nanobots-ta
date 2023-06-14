@@ -66,10 +66,10 @@ class ViewController:
 
 				# if (x,y) == tumor_start:
 				# 	pygame.draw.rect(self.SCREEN, self.BLACK, rect, 0)
-				if self.configuration.vertices[(x,y)].state.markers > 0:
-					col = float(m(self.configuration.vertices[(x,y)].state.markers))
-					pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
-				elif self.configuration.vertices[(x,y)].state.is_task:
+				# if self.configuration.vertices[(x,y)].state.markers > 0:
+				# 	col = float(m(self.configuration.vertices[(x,y)].state.markers))
+				# 	pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
+				if self.configuration.vertices[(x,y)].state.is_task:
 					pygame.draw.rect(self.SCREEN, self.YELLOW, rect, 0)
 					# demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.residual_demand), True, self.BLACK)
 					# self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
@@ -77,6 +77,9 @@ class ViewController:
 					pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
 				elif self.configuration.vertices[(x,y)].state.is_home:
 					pygame.draw.rect(self.SCREEN, self.RED, rect, 0)
+				elif self.configuration.vertices[(x,y)].state.markers > 0:
+					col = float(m(self.configuration.vertices[(x,y)].state.markers))
+					pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
 				# elif num_beac_agents > 0:
 				# 	pygame.draw.rect(self.SCREEN, self.BLACK, rect, 0)
 				# elif self.configuration.vertices[(x,y)].state.markers > 0:

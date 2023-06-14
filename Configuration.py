@@ -173,7 +173,7 @@ class Configuration:
 
 
 			if random() <= p_m_markers and vertex.state.markers > 0:
-				vertex.state.markers = max(0, vertex.state.markers - 1)
+				vertex.state.markers = max(0, vertex.state.markers - .5)
 				dirs = []
 				for dir in ["S", "U", "D", "L", "R"]:
 					new_x, new_y = vertex.coords()[0] + dir_to_dxdy[dir][0], vertex.coords()[1] + dir_to_dxdy[dir][1]
@@ -181,7 +181,7 @@ class Configuration:
 						dirs.append(dir)
 				new_dir = choice(dirs)
 				new_x, new_y = vertex.coords()[0] + dir_to_dxdy[new_dir][0], vertex.coords()[1] + dir_to_dxdy[new_dir][1]
-				self.vertices[(new_x, new_y)].state.markers += 1
+				self.vertices[(new_x, new_y)].state.markers += .5
 
 
 			# Update agents
