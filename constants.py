@@ -38,6 +38,7 @@ T = 10
 
 ALPHA = 0.5
 
-EPSILON = 0.1
+EPSILON = 0.05
 
 p_m = 0.05
+p_m_beacons = 0.025

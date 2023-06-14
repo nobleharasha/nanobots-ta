@@ -91,7 +91,11 @@ class Agent:
 
 				#new_dir = self.get_travel_direction(new_agent_state)
 
-		if random.random() <= p_m:
+		if new_agent_state.mode == 'S':
+			prob_m = p_m_beacons
+		else:
+			prob_m = p_m
+		if random.random() <= prob_m:
 			dirs = []
 			for dxdy in local_vertex_mapping:
 				try:

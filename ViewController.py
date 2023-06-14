@@ -20,7 +20,7 @@ class ViewController:
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
 	VERTEX_SIZE = 17
-	FPS = 15
+	FPS = 30
 	#FPS = 60
 
 	def __init__(self, configuration):

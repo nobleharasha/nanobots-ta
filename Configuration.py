@@ -147,6 +147,7 @@ class Configuration:
 	global state
 	"""
 	def execute_transition(self,global_transitory):
+		# *****
 		beacon_locs = set()
 		for x in range(0, self.M):
 			for y in range(0, self.N):
@@ -161,7 +162,7 @@ class Configuration:
 			# Update vertex state
 			vertex.state = new_vertex_state
 
-
+			# *******
 			signal = 0
 			for beac_loc in beacon_locs:
 				signal += signal_amt((x,y), beac_loc)
