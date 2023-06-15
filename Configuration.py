@@ -1,9 +1,9 @@
 import multiprocessing as mp
 from Agent import Agent
 from Vertex import Vertex
-from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt
+from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt, l2_distance
 from res_utils import *
-from constants import INFLUENCE_RADIUS
+from constants import INFLUENCE_RADIUS, BEAC_RAD
 import time
 
 """
@@ -163,10 +163,16 @@ class Configuration:
 			vertex.state = new_vertex_state
 
 			# *******
-			signal = 0
+			sig_tmp = False
 			for beac_loc in beacon_locs:
-				signal += signal_amt((x,y), beac_loc)
-			vertex.state.sig = signal
+				if l2_distance(x, y, beac_loc[0], beac_loc[1]) <= BEAC_RAD:
+					sig_tmp = True
+			vertex.state.signal = sig_tmp
+
+			# signal = 0
+			# for beac_loc in beacon_locs:
+			# 	signal += signal_amt((x,y), beac_loc)
+			# vertex.state.sig = signal
 
 
 			# if vertex.state.is_task:

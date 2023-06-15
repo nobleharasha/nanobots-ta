@@ -35,6 +35,7 @@ TMR_DST = (min(M, N) / 2) * .7
 
 
 T = 10
+P = 10
 
 ALPHA = 0.5
 
@@ -42,3 +43,7 @@ EPSILON = 0.05
 
 p_m = 0.05
 p_m_beacons = 0.025
+
+BEAC_RAD = 3
+
+p_e = 0.05

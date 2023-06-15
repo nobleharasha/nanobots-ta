@@ -55,13 +55,27 @@ class Agent:
 		return new_direction
 
 
+	def random_rw(self):
+		curr_loc = self.location.coords()
+		dirs = []
+		for dir in ['S', 'U', 'D', 'L', 'R']:
+			new_loc = (curr_loc[0] + dir_to_dxdy[dir][0], curr_loc[1] + dir_to_dxdy[dir][1])
+			if within_bounds(new_loc[0], new_loc[1]):
+				dirs.append(dir)
+		return random.choice(dirs)
+
+
 
 	def generate_transition(self, local_vertex_mapping):
 		new_agent_state = copy.copy(self.state)
 		new_agent_state.ct += 1
 
-		sig_tmp = self.location.state.sig
-		sig_tmp = max(0, random.uniform(sig_tmp - EPSILON, sig_tmp + EPSILON))
+		# sig_tmp = self.location.state.sig
+		# sig_tmp = max(0, random.uniform(sig_tmp - EPSILON, sig_tmp + EPSILON))
+
+		sig = self.location.state.signal
+		# if random.random() <= p_e:
+		# 	sig = not sig
 
 		if new_agent_state.mode == "S":
 			new_dir = "S"
@@ -70,41 +84,59 @@ class Agent:
 			if new_agent_state.ct >= T:
 				new_agent_state.mode = "P"
 				new_agent_state.ct = 0
-				new_agent_state.prop_time = random.randrange(0, M/2)
+				# new_agent_state.prop_time = random.randrange(0, M/2)
 		elif new_agent_state.mode == "P":
-			if new_agent_state.ct >= new_agent_state.prop_time:
+			if new_agent_state.ct >= P:
 				new_dir = "S"
 				new_agent_state.mode = "S"
 				new_agent_state.ct = 0
 			else:
-				new_dir = self.get_travel_direction(new_agent_state)
+				# new_dir = self.get_travel_direction(new_agent_state)
+				new_dir = self.random_rw()
 		else:  # mode == "E"
 			if self.location.state.is_task:
 				new_dir = "S"
 				new_agent_state.mode = "D"
 				new_agent_state.ct = 0
+				new_agent_state.no_tmr_ct = 0
+			elif new_agent_state.large_step is not None:
+				new_dir = new_agent_state.large_step[0]
+				new_loc = get_coords_from_movement(self.location.coords()[0], self.location.coords()[1], new_dir)
+				if not within_bounds(new_loc[0], new_loc[1]):
+					new_dir = self.random_rw()
+				new_agent_state.large_step = (new_dir, new_agent_state.large_step[1] - 1)
+				if new_agent_state.large_step[1] <= 0:
+					new_agent_state.large_step = None
 			else:
-				if sig_tmp > new_agent_state.prev[1]:
-					new_dir = new_agent_state.prev[0]
+				new_agent_state.no_tmr_ct += 1
+				if new_agent_state.no_tmr_ct >= 25:
+					new_agent_state.no_tmr_ct = 0
+					new_dir = self.random_rw()
+					new_agent_state.large_step = (new_dir, 5)
+				elif not sig and new_agent_state.prev[1]:
+					new_dir = dir_to_opp[new_agent_state.prev[0]]
 				else:
-					new_dir = self.get_travel_direction(new_agent_state)
+					#new_dir = self.get_travel_direction(new_agent_state)
+					new_dir = self.random_rw()
+
+				# new_dir = self.random_rw()
 
 				#new_dir = self.get_travel_direction(new_agent_state)
 
-		if new_agent_state.mode == 'S':
-			prob_m = p_m_beacons
-		else:
-			prob_m = p_m
-		if random.random() <= prob_m:
-			dirs = []
-			for dxdy in local_vertex_mapping:
-				try:
-					dirs.append(dxdy_to_dir[dxdy])
-				except:
-					pass
-			new_dir = random.choice(dirs)
+		# if new_agent_state.mode == 'S':
+		# 	prob_m = p_m_beacons
+		# else:
+		# 	prob_m = p_m
+		# if random.random() <= prob_m:
+		# 	dirs = []
+		# 	for dxdy in local_vertex_mapping:
+		# 		try:
+		# 			dirs.append(dxdy_to_dir[dxdy])
+		# 		except:
+		# 			pass
+		# 	new_dir = random.choice(dirs)
 
-		new_agent_state.prev = (new_dir, sig_tmp)
+		new_agent_state.prev = (new_dir, sig)
 		return self.location.state, new_agent_state, new_dir
 
 
