@@ -21,9 +21,9 @@ class AgentState:
 		self.ct = 0
 		self.prop_time = 0
 
-		self.prev = ("S", 0)
+		self.prev = ("S", False)
 
 
 
-		self.no_tmr_ct = 0
-		self.large_step = None
+		# self.no_tmr_ct = 0
+		# self.large_step = None

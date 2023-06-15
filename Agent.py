@@ -86,7 +86,7 @@ class Agent:
 				new_agent_state.ct = 0
 				# new_agent_state.prop_time = random.randrange(0, M/2)
 		elif new_agent_state.mode == "P":
-			if new_agent_state.ct >= P:
+			if new_agent_state.ct >= P or not sig:
 				new_dir = "S"
 				new_agent_state.mode = "S"
 				new_agent_state.ct = 0
@@ -99,21 +99,21 @@ class Agent:
 				new_agent_state.mode = "D"
 				new_agent_state.ct = 0
 				new_agent_state.no_tmr_ct = 0
-			elif new_agent_state.large_step is not None:
-				new_dir = new_agent_state.large_step[0]
-				new_loc = get_coords_from_movement(self.location.coords()[0], self.location.coords()[1], new_dir)
-				if not within_bounds(new_loc[0], new_loc[1]):
-					new_dir = self.random_rw()
-				new_agent_state.large_step = (new_dir, new_agent_state.large_step[1] - 1)
-				if new_agent_state.large_step[1] <= 0:
-					new_agent_state.large_step = None
+			# elif new_agent_state.large_step is not None:
+			# 	new_dir = new_agent_state.large_step[0]
+			# 	new_loc = get_coords_from_movement(self.location.coords()[0], self.location.coords()[1], new_dir)
+			# 	if not within_bounds(new_loc[0], new_loc[1]):
+			# 		new_dir = self.random_rw()
+			# 	new_agent_state.large_step = (new_dir, new_agent_state.large_step[1] - 1)
+			# 	if new_agent_state.large_step[1] <= 0:
+			# 		new_agent_state.large_step = None
 			else:
-				new_agent_state.no_tmr_ct += 1
-				if new_agent_state.no_tmr_ct >= 25:
-					new_agent_state.no_tmr_ct = 0
-					new_dir = self.random_rw()
-					new_agent_state.large_step = (new_dir, 5)
-				elif not sig and new_agent_state.prev[1]:
+				# new_agent_state.no_tmr_ct += 1
+				# if new_agent_state.no_tmr_ct >= 25:
+				# 	new_agent_state.no_tmr_ct = 0
+				# 	new_dir = self.random_rw()
+				# 	new_agent_state.large_step = (new_dir, 5)
+				if not sig and new_agent_state.prev[1]:
 					new_dir = dir_to_opp[new_agent_state.prev[0]]
 				else:
 					#new_dir = self.get_travel_direction(new_agent_state)
