@@ -35,7 +35,7 @@ TMR_DST = (min(M, N) / 2) * .7
 
 
 T = 10
-P = 15
+P = 10
 
 ALPHA = 0.5
 

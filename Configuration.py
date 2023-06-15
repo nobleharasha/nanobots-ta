@@ -71,13 +71,13 @@ class Configuration:
 		self.pool = pool
 
 
-	def add_agents(self, agent_locations):
+	def add_agents(self, agent_locations, types):
 
 		for agent_id in range(len(agent_locations)):
 			location = self.vertices[agent_locations[agent_id]]
-			agent = Agent(agent_id, location)
-			while agent_id in self.agents:
-				agent_id += 1
+			agent = Agent(agent_id, location, types[agent_id])
+			# while agent_id in self.agents:
+			# 	agent_id += 1
 			self.agents[agent_id] = agent
 			self.drug_visits_peragent[agent_id] = 0
 			location.agents.add(agent)
@@ -135,7 +135,7 @@ class Configuration:
 		# 				global_beacon_locations.add((x,y))
 
 		for agent in vertex.agents:
-			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping, self)
+			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping)
 
 			proposed_vertex_states[agent.state.id] = proposed_vertex_state
 			proposed_agent_updates[agent.state.id] = AgentTransition(proposed_agent_state, direction)
@@ -172,16 +172,16 @@ class Configuration:
 			# vertex.state.sig = signal
 
 
-			if random() <= p_m_markers and vertex.state.markers > 0:
-				vertex.state.markers = max(0, vertex.state.markers - .5)
-				dirs = []
-				for dir in ["S", "U", "D", "L", "R"]:
-					new_x, new_y = vertex.coords()[0] + dir_to_dxdy[dir][0], vertex.coords()[1] + dir_to_dxdy[dir][1]
-					if within_bounds(new_x, new_y):
-						dirs.append(dir)
-				new_dir = choice(dirs)
-				new_x, new_y = vertex.coords()[0] + dir_to_dxdy[new_dir][0], vertex.coords()[1] + dir_to_dxdy[new_dir][1]
-				self.vertices[(new_x, new_y)].state.markers += .5
+			# if random() <= p_m_markers and vertex.state.markers > 0:
+			# 	vertex.state.markers = max(0, vertex.state.markers - .5)
+			# 	dirs = []
+			# 	for dir in ["S", "U", "D", "L", "R"]:
+			# 		new_x, new_y = vertex.coords()[0] + dir_to_dxdy[dir][0], vertex.coords()[1] + dir_to_dxdy[dir][1]
+			# 		if within_bounds(new_x, new_y):
+			# 			dirs.append(dir)
+			# 	new_dir = choice(dirs)
+			# 	new_x, new_y = vertex.coords()[0] + dir_to_dxdy[new_dir][0], vertex.coords()[1] + dir_to_dxdy[new_dir][1]
+			# 	self.vertices[(new_x, new_y)].state.markers += .5
 
 
 			# Update agents

@@ -62,10 +62,17 @@ def main(alphas = []):
 
     # Initialize agents
     agent_locations = []
+    types = []
     for i in range(NUM_AGENTS):
+        if i % 2 == 0:
+            type = "C"
+        else:
+            type = "H"
         agent_locations.append((randint(HOME_LOC[0][0], HOME_LOC[0][1]), randint(HOME_LOC[1][0], HOME_LOC[1][1])))
+        types.append(type)
 
-    configuration.add_agents(agent_locations)
+    # print(agent_locations, types)
+    configuration.add_agents(agent_locations, types)
     if graphics_on:
         vc = ViewController(configuration)
     ct = 0

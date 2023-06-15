@@ -8,5 +8,8 @@ class VertexState:
 		self.task_location = task_location
 
 		# self.markers = 0
-		
-		self.marker = False
+
+		# self.marker = False
+
+		self.c_f = 0
+		self.h_f = 0
