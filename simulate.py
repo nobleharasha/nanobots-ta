@@ -116,8 +116,10 @@ if __name__ == "__main__":
     runtimes = []
     for rad in rads:
         tmp = []
-        for _ in range(20):
-            tmp.append(main(alphas, rad)[-1])
+        for _ in range(10):
+            out = main(alphas, rad)[-1]
+            print(str(rad) + ":" + str(out))
+            tmp.append(out)
         runtimes.append(tmp)
     print(runtimes)
 
