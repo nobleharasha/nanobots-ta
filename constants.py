@@ -30,7 +30,7 @@ levy_cap = 1/L
 
 
 
-TMR_DNS = .4
+TMR_DNS = .5
 TMR_DST = (min(M, N) / 2) * .7
 
 
@@ -44,6 +44,6 @@ EPSILON = 0.05
 p_m = 0.05
 p_m_beacons = 0.025
 
-BEAC_RAD = 3
+# BEAC_RAD = 10
 
 p_e = 0.05

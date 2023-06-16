@@ -1,4 +1,4 @@
-graphics_on = True
+graphics_on = False
 
 if graphics_on:
     import pygame
@@ -13,9 +13,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def main(alphas):
+def main(alphas=[], rad=3):
 
-    configuration  = Configuration(N, M, TORUS)
+    BEAC_RAD = rad
+
+    configuration  = Configuration(N, M, BEAC_RAD, TORUS)
     home = VertexState(is_home=True)
 
     for x in range(HOME_LOC[0][0], HOME_LOC[0][1]+1):
@@ -73,7 +75,7 @@ def main(alphas):
     runtimes_at_each_alpha = []
 
     num_drug_visits = 0
-    while num_drug_visits < .9 * NUM_AGENTS:
+    while num_drug_visits <= .9 * NUM_AGENTS:
         ct+=1
         configuration.transition()
         for a in configuration.agents:
@@ -84,36 +86,52 @@ def main(alphas):
         for i in range(len(alphas)):
             if num_drug_visits >= NUM_AGENTS * alphas[i] and len(runtimes_at_each_alpha) <= i:
                 runtimes_at_each_alpha.append(ct)
-                print(ct)
+                # print(ct)
 
         if graphics_on:
             vc.update()
 
-    print('\n')
+    # print('\n')
 
 
     if graphics_on:
         vc.quit()
 
     #return ct
+    print(f"rad:{rad}, runtimes:{runtimes_at_each_alpha}")
     return runtimes_at_each_alpha
 
 
 if __name__ == "__main__":
 
-    main([])
+    # main()
 
 
 
     # x = []
     # y = []
-    # alphas = np.arange(0,1.001,.05)
+
+    alphas = np.arange(0,.9001,.05)
+    rads = np.arange(1,10.001,1)
+    runtimes = []
+    for rad in rads:
+        tmp = []
+        for _ in range(20):
+            tmp.append(main(alphas, rad)[-1])
+        runtimes.append(tmp)
+    print(runtimes)
+
+
+
+    # alphas = np.arange(0,.9001,.05)
     # runtimes = []
-    # for _ in range(11):
-    #     runtimes.append(main(alphas))
-    #
-    # #runtimes = [ [1,29,120,136,144,162,204,227,234,289,296,319,359,387,420,422,495,560,744,1183,1192], [1,24,83,104,111,159,186,222,224,247,283,307,313,330,455,490,633,711,734,784,1217],[1,33,56,62,67,88,101,107,113,128,132,140,146,170,242,401,439,615,831,865,1153],[1,28,55,84,106,139,156,172,181,231,239,273,361,367,415,440,505,599,733,911,1036],[1,117,156,180,200,209,246,249,259,342,345,401,704,716,735,769,812,1104,1126,1222,1781],[1,44,82,132,160,192,202,289,295,336,347,368,384,387,468,513,549,587,676,792,1195],[1,59,69,85,94,117,121,137,180,190,205,223,288,315,446,455,469,527,596,805,829],[1,32,48,66,156,188,212,236,251,301,310,399,414,494,517,524,544,685,850,978,1571],[1,23,63,85,89,181,221,226,261,279,302,337,380,416,450,468,589,632,835,913,1118],[1,46,54,73,73,145,177,185,189,206,239,305,326,334,359,364,425,611,666,848,1463] ]
-    #
+    # for _ in range(20):
+    #     runtimes.append(main(alphas)[-1])
+    # print(runtimes)
+
+
+    #runtimes = [ [1,29,120,136,144,162,204,227,234,289,296,319,359,387,420,422,495,560,744,1183,1192], [1,24,83,104,111,159,186,222,224,247,283,307,313,330,455,490,633,711,734,784,1217],[1,33,56,62,67,88,101,107,113,128,132,140,146,170,242,401,439,615,831,865,1153],[1,28,55,84,106,139,156,172,181,231,239,273,361,367,415,440,505,599,733,911,1036],[1,117,156,180,200,209,246,249,259,342,345,401,704,716,735,769,812,1104,1126,1222,1781],[1,44,82,132,160,192,202,289,295,336,347,368,384,387,468,513,549,587,676,792,1195],[1,59,69,85,94,117,121,137,180,190,205,223,288,315,446,455,469,527,596,805,829],[1,32,48,66,156,188,212,236,251,301,310,399,414,494,517,524,544,685,850,978,1571],[1,23,63,85,89,181,221,226,261,279,302,337,380,416,450,468,589,632,835,913,1118],[1,46,54,73,73,145,177,185,189,206,239,305,326,334,359,364,425,611,666,848,1463] ]
+
     # for i in range(len(runtimes[0])):
     #     tmp = []
     #     for j in range(len(runtimes)):

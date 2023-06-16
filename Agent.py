@@ -66,7 +66,7 @@ class Agent:
 
 
 
-	def generate_transition(self, local_vertex_mapping):
+	def generate_transition(self, local_vertex_mapping, beac_locs, new_beac):
 		new_agent_state = copy.copy(self.state)
 		new_agent_state.ct += 1
 
@@ -86,10 +86,13 @@ class Agent:
 				new_agent_state.ct = 0
 				# new_agent_state.prop_time = random.randrange(0, M/2)
 		elif new_agent_state.mode == "P":
-			if new_agent_state.ct >= P or not sig:
+			# if new_agent_state.ct >= P or not sig:
+			if not sig:
 				new_dir = "S"
 				new_agent_state.mode = "S"
 				new_agent_state.ct = 0
+				beac_locs.add(self.location.coords())
+				new_beac[0] = True
 			else:
 				# new_dir = self.get_travel_direction(new_agent_state)
 				new_dir = self.random_rw()
@@ -113,6 +116,8 @@ class Agent:
 				# 	new_agent_state.no_tmr_ct = 0
 				# 	new_dir = self.random_rw()
 				# 	new_agent_state.large_step = (new_dir, 5)
+
+
 				if not sig and new_agent_state.prev[1]:
 					new_dir = dir_to_opp[new_agent_state.prev[0]]
 				else:
@@ -120,6 +125,7 @@ class Agent:
 					new_dir = self.random_rw()
 
 				# new_dir = self.random_rw()
+
 
 				#new_dir = self.get_travel_direction(new_agent_state)
 

@@ -3,7 +3,7 @@ from Agent import Agent
 from Vertex import Vertex
 from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt, l2_distance
 from res_utils import *
-from constants import INFLUENCE_RADIUS, BEAC_RAD
+from constants import INFLUENCE_RADIUS
 import time
 
 """
@@ -55,7 +55,7 @@ class Configuration:
 		True if the grid is a torus, False if we are considering
 		edge effects
 	"""
-	def __init__(self, N, M, torus=False, pool = None):
+	def __init__(self, N, M, BEAC_RAD=3, torus=False, pool = None):
 		# Create all vertices
 		self.vertices = {}
 		for x in range(M):
@@ -68,6 +68,10 @@ class Configuration:
 		self.agents = {} # map from id to agent itself
 		self.drug_visits_peragent = {}
 		self.pool = pool
+
+		self.beac_rad = BEAC_RAD
+		self.beac_locs = set()
+		self.new_beac = [False]
 
 
 	def add_agents(self, agent_locations):
@@ -132,7 +136,7 @@ class Configuration:
 		# 				global_beacon_locations.add((x,y))
 
 		for agent in vertex.agents:
-			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping)
+			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping, self.beac_locs, self.new_beac)
 
 			proposed_vertex_states[agent.state.id] = proposed_vertex_state
 			proposed_agent_updates[agent.state.id] = AgentTransition(proposed_agent_state, direction)
@@ -148,12 +152,12 @@ class Configuration:
 	"""
 	def execute_transition(self,global_transitory):
 		# *****
-		beacon_locs = set()
-		for x in range(0, self.M):
-			for y in range(0, self.N):
-				for a in self.vertices[(x,y)].agents:
-					if a.state.mode == "S":
-						beacon_locs.add((x,y))
+		# beacon_locs = set()
+		# for x in range(0, self.M):
+		# 	for y in range(0, self.N):
+		# 		for a in self.vertices[(x,y)].agents:
+		# 			if a.state.mode == "S":
+		# 				beacon_locs.add((x,y))
 
 		for x,y in global_transitory.keys():
 			vertex = self.vertices[(x,y)]
@@ -162,12 +166,17 @@ class Configuration:
 			# Update vertex state
 			vertex.state = new_vertex_state
 
+
 			# *******
-			sig_tmp = False
-			for beac_loc in beacon_locs:
-				if l2_distance(x, y, beac_loc[0], beac_loc[1]) <= BEAC_RAD:
-					sig_tmp = True
-			vertex.state.signal = sig_tmp
+			if not vertex.state.signal and self.new_beac[0]:
+				sig_tmp = False
+				for beac_loc in self.beac_locs:
+					if l2_distance(x, y, beac_loc[0], beac_loc[1]) <= self.beac_rad:
+						sig_tmp = True
+						break
+				vertex.state.signal = sig_tmp
+
+
 
 			# signal = 0
 			# for beac_loc in beacon_locs:
@@ -198,6 +207,8 @@ class Configuration:
 
 					# Add agent to updated location
 					agent.location.agents.add(agent)
+
+		self.new_beac[0] = False
 
 	"""
 	Transition from the current global state into the next one
