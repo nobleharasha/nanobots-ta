@@ -1,4 +1,4 @@
-graphics_on = True
+graphics_on = False
 
 if graphics_on:
     import pygame
@@ -13,9 +13,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def main(alphas = []):
+def main(alphas=[], p=10):
 
-    configuration  = Configuration(N, M, TORUS)
+    P = int(p)
+
+    configuration  = Configuration(N, M, P, TORUS)
     home = VertexState(is_home=True)
 
     for x in range(HOME_LOC[0][0], HOME_LOC[0][1]+1):
@@ -62,17 +64,10 @@ def main(alphas = []):
 
     # Initialize agents
     agent_locations = []
-    types = []
     for i in range(NUM_AGENTS):
-        if i % 2 == 0:
-            type = "C"
-        else:
-            type = "H"
         agent_locations.append((randint(HOME_LOC[0][0], HOME_LOC[0][1]), randint(HOME_LOC[1][0], HOME_LOC[1][1])))
-        types.append(type)
 
-    # print(agent_locations, types)
-    configuration.add_agents(agent_locations, types)
+    configuration.add_agents(agent_locations)
     if graphics_on:
         vc = ViewController(configuration)
     ct = 0
@@ -80,7 +75,7 @@ def main(alphas = []):
     runtimes_at_each_alpha = []
 
     num_drug_visits = 0
-    while num_drug_visits < NUM_AGENTS:
+    while num_drug_visits <= .9 * NUM_AGENTS:
         ct+=1
         configuration.transition()
         for a in configuration.agents:
@@ -91,36 +86,63 @@ def main(alphas = []):
         for i in range(len(alphas)):
             if num_drug_visits >= NUM_AGENTS * alphas[i] and len(runtimes_at_each_alpha) <= i:
                 runtimes_at_each_alpha.append(ct)
-                print(ct)
+                # print(ct)
 
         if graphics_on:
             vc.update()
 
-    print('\n')
+    # print('\n')
 
 
     if graphics_on:
         vc.quit()
 
     #return ct
+    print(f"p:{p}, runtimes:{runtimes_at_each_alpha}")
     return runtimes_at_each_alpha
 
 
 if __name__ == "__main__":
 
-    main()
+    # main()
+
 
 
     # x = []
     # y = []
-    # alphas = np.arange(0,1.001,.05)
+
+    # file = open("MARK_16_06_data.txt", "w")
+    #
+    # alphas = np.arange(0,.9001,.05)
+    # ps = np.arange(5,50.001,1)
     # runtimes = []
-    # for _ in range(11):
-    #     runtimes.append(main(alphas))
-    #
-    # #runtimes = [ [1,29,120,136,144,162,204,227,234,289,296,319,359,387,420,422,495,560,744,1183,1192], [1,24,83,104,111,159,186,222,224,247,283,307,313,330,455,490,633,711,734,784,1217],[1,33,56,62,67,88,101,107,113,128,132,140,146,170,242,401,439,615,831,865,1153],[1,28,55,84,106,139,156,172,181,231,239,273,361,367,415,440,505,599,733,911,1036],[1,117,156,180,200,209,246,249,259,342,345,401,704,716,735,769,812,1104,1126,1222,1781],[1,44,82,132,160,192,202,289,295,336,347,368,384,387,468,513,549,587,676,792,1195],[1,59,69,85,94,117,121,137,180,190,205,223,288,315,446,455,469,527,596,805,829],[1,32,48,66,156,188,212,236,251,301,310,399,414,494,517,524,544,685,850,978,1571],[1,23,63,85,89,181,221,226,261,279,302,337,380,416,450,468,589,632,835,913,1118],[1,46,54,73,73,145,177,185,189,206,239,305,326,334,359,364,425,611,666,848,1463] ]
-    #
-    # for i in range(len(alphas)):
+    # for p in ps:
+    #     tmp = []
+    #     for _ in range(10):
+    #         out = main(alphas, p)[-1]
+    #         file.write(str(out) + ", ")
+    #         tmp.append(out)
+    #     file.write("\n")
+    #     runtimes.append(tmp)
+    # print(runtimes)
+    # file.close()
+
+
+
+    f2 = open("RW_16_06_data.txt", "w")
+    alphas = np.arange(0,.9001,.05)
+    runtimes = []
+    for _ in range(10):
+        out = main(alphas)[-1]
+        f2.write(str(out) + ", ")
+        runtimes.append(out)
+    print(runtimes)
+    f2.close()
+
+
+    #runtimes = [ [1,29,120,136,144,162,204,227,234,289,296,319,359,387,420,422,495,560,744,1183,1192], [1,24,83,104,111,159,186,222,224,247,283,307,313,330,455,490,633,711,734,784,1217],[1,33,56,62,67,88,101,107,113,128,132,140,146,170,242,401,439,615,831,865,1153],[1,28,55,84,106,139,156,172,181,231,239,273,361,367,415,440,505,599,733,911,1036],[1,117,156,180,200,209,246,249,259,342,345,401,704,716,735,769,812,1104,1126,1222,1781],[1,44,82,132,160,192,202,289,295,336,347,368,384,387,468,513,549,587,676,792,1195],[1,59,69,85,94,117,121,137,180,190,205,223,288,315,446,455,469,527,596,805,829],[1,32,48,66,156,188,212,236,251,301,310,399,414,494,517,524,544,685,850,978,1571],[1,23,63,85,89,181,221,226,261,279,302,337,380,416,450,468,589,632,835,913,1118],[1,46,54,73,73,145,177,185,189,206,239,305,326,334,359,364,425,611,666,848,1463] ]
+
+    # for i in range(len(runtimes[0])):
     #     tmp = []
     #     for j in range(len(runtimes)):
     #         tmp.append(runtimes[j][i])
@@ -136,8 +158,8 @@ if __name__ == "__main__":
     # plt.xlabel('# Rounds')
     # plt.ylabel('% Agents That Have Vistied Tumor')
     # #plt.title('Effect of Task Density on Average (Propagator) Messages Sent')
-    # plt.savefig("test_alphasvruntimes_10trials.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
+    # plt.savefig("TEST4_alphasvruntimes_10trials.pdf", dpi=300, bbox_inches='tight', pad_inches=0)
     # plt.show()
-    #
-    #
-    # #print(f"Avg: {sum(runtimes) / len(runtimes)}")
+
+
+    #print(f"Avg: {sum(runtimes) / len(runtimes)}")

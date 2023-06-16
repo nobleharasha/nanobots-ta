@@ -30,12 +30,12 @@ levy_cap = 1/L
 
 
 
-TMR_DNS = .4
+TMR_DNS = .5
 TMR_DST = (min(M, N) / 2) * .7
 
 
 T = 10
-P = 10
+# P = 10
 
 ALPHA = 0.5
 

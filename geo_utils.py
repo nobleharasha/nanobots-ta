@@ -1,5 +1,5 @@
 directions = ["S", "L", "R", "D", "U"]
-from constants import N, M, TORUS, P
+from constants import N, M, TORUS
 import numpy as np
 import random
 
@@ -147,6 +147,6 @@ def signal_amt(curr_loc, beac_loc):
 	dist = l2_distance(curr_loc[0], curr_loc[1], beac_loc[0], beac_loc[1])
 	return max(0, -1 * (dist**4 / 1000) + 1)
 
-def marker_amt(ct):
-	# return max(0, -1 * (ct**2 - P**2) * (ct**2 + P**2) / P**4)
-	return max(0, -1 * (ct - P) / P)
+# def marker_amt(ct):
+# 	# return max(0, -1 * (ct**2 - P**2) * (ct**2 + P**2) / P**4)
+# 	return max(0, -1 * (ct - P) / P)

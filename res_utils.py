@@ -20,13 +20,13 @@ def winner_takes_all(proposed_vertex_states, proposed_agent_updates, vertex):
 			new_agent_updates[agent] = None
 
 def task_claiming_resolution(proposed_vertex_states, proposed_agent_updates, vertex):
-	cf_added = 0
-	hf_added = 0
-	for agent_id in proposed_vertex_states.keys():
-		cf_added += proposed_vertex_states[agent_id].c_f - vertex.state.c_f
-		hf_added += proposed_vertex_states[agent_id].h_f - vertex.state.h_f
-	vertex.state.c_f += cf_added
-	vertex.state.h_f += hf_added
+	# cf_added = 0
+	# hf_added = 0
+	# for agent_id in proposed_vertex_states.keys():
+	# 	cf_added += proposed_vertex_states[agent_id].c_f - vertex.state.c_f
+	# 	hf_added += proposed_vertex_states[agent_id].h_f - vertex.state.h_f
+	# vertex.state.c_f += cf_added
+	# vertex.state.h_f += hf_added
 
 
 	if not vertex.state.is_task:
