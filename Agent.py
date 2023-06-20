@@ -133,12 +133,12 @@ class Agent:
 				new_agent_state.ct = 0
 				# new_agent_state.no_tmr_ct = 0
 			else:
-				# if not mark and new_agent_state.prev[1]:
-				# 	new_dir = dir_to_opp[new_agent_state.prev[0]]
-				# else:
-				# 	new_dir = self.random_rw()
+				if not mark and new_agent_state.prev[1]:
+					new_dir = dir_to_opp[new_agent_state.prev[0]]
+				else:
+					new_dir = self.random_rw()
 
-				new_dir = self.random_rw()
+				# new_dir = self.random_rw()
 
 		new_agent_state.prev = (new_dir, mark)
 		return self.location.state, new_agent_state, new_dir
