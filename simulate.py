@@ -86,7 +86,7 @@ def main(alphas=[], rad=3):
         for i in range(len(alphas)):
             if num_drug_visits >= NUM_AGENTS * alphas[i] and len(runtimes_at_each_alpha) <= i:
                 runtimes_at_each_alpha.append(ct)
-                # print(ct)
+                print(ct)
 
         if graphics_on:
             vc.update()
@@ -99,29 +99,34 @@ def main(alphas=[], rad=3):
 
     #return ct
     print(f"rad:{rad}, runtimes:{runtimes_at_each_alpha}")
-    return runtimes_at_each_alpha
+    return runtimes_at_each_alpha[-1]
 
 
 if __name__ == "__main__":
 
-    # main()
+
+    alphas = np.arange(0,.9001,.05)
+    runtimes = []
+    for _ in range(2):
+        runtimes.append(main(alphas, 5))
+    print(runtimes)
 
 
 
     # x = []
     # y = []
 
-    alphas = np.arange(0,.9001,.05)
-    rads = np.arange(1,10.001,1)
-    runtimes = []
-    for rad in rads:
-        tmp = []
-        for _ in range(10):
-            out = main(alphas, rad)[-1]
-            print(str(rad) + ":" + str(out))
-            tmp.append(out)
-        runtimes.append(tmp)
-    print(runtimes)
+    # alphas = np.arange(0,.9001,.05)
+    # rads = np.arange(1,20.001,1)
+    # runtimes = []
+    # for rad in rads:
+    #     tmp = []
+    #     for _ in range(10):
+    #         out = main(alphas, rad)[-1]
+    #         print(str(rad) + ":" + str(out))
+    #         tmp.append(out)
+    #     runtimes.append(tmp)
+    # print(runtimes)
 
 
 

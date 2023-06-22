@@ -118,13 +118,13 @@ class Agent:
 				# 	new_agent_state.large_step = (new_dir, 5)
 
 
-				if not sig and new_agent_state.prev[1]:
-					new_dir = dir_to_opp[new_agent_state.prev[0]]
-				else:
-					#new_dir = self.get_travel_direction(new_agent_state)
-					new_dir = self.random_rw()
+				# if not sig and new_agent_state.prev[1]:
+				# 	new_dir = dir_to_opp[new_agent_state.prev[0]]
+				# else:
+				# 	#new_dir = self.get_travel_direction(new_agent_state)
+				# 	new_dir = self.random_rw()
 
-				# new_dir = self.random_rw()
+				new_dir = self.random_rw()
 
 
 				#new_dir = self.get_travel_direction(new_agent_state)

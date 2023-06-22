@@ -3,7 +3,7 @@ import sys
 from scipy.interpolate import interp1d
 from geo_utils import signal_amt
 from random import uniform
-from constants import HOME_LOC, TMR_DST
+from constants import HOME_LOC, TMR_DST, M, N
 from math import pi, cos, sin
 
 home_center = (HOME_LOC[0][0] + int((HOME_LOC[1][0] - HOME_LOC[0][0]) / 2), HOME_LOC[0][1] + int((HOME_LOC[1][1] - HOME_LOC[0][1]) / 2))
@@ -19,7 +19,8 @@ class ViewController:
 	RED = (200,0,0)
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
-	VERTEX_SIZE = 17
+	# VERTEX_SIZE = int( (17 / 50) * max(M, N) )
+	VERTEX_SIZE = 1
 	FPS = 1000
 
 	def __init__(self, configuration):
@@ -37,7 +38,7 @@ class ViewController:
 		for x in range(0, self.configuration.M):
 			for y in range(0, self.configuration.N):
 				rect = pygame.Rect(x*self.VERTEX_SIZE, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE, self.VERTEX_SIZE, self.VERTEX_SIZE)
-				pygame.draw.rect(self.SCREEN, self.BLACK, rect, 1)
+				# pygame.draw.rect(self.SCREEN, self.BLACK, rect, 1)
 		pygame.display.update()
 
 	def draw_configuration(self):
