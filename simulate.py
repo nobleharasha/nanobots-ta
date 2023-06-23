@@ -5,7 +5,7 @@ if graphics_on:
 from ViewController import ViewController, tumor_start
 from Configuration import Configuration
 from constants import *
-from math import pi, cos, sin
+from math import pi, cos, sin, ceil
 from random import random, randint, uniform
 from VertexState import VertexState
 import multiprocessing as mp
@@ -86,7 +86,7 @@ def main(alphas=[], p=10):
         for i in range(len(alphas)):
             if num_drug_visits >= NUM_AGENTS * alphas[i] and len(runtimes_at_each_alpha) <= i:
                 runtimes_at_each_alpha.append(ct)
-                # print(ct)
+                print(ct)
 
         if graphics_on:
             vc.update()
@@ -99,33 +99,39 @@ def main(alphas=[], p=10):
 
     #return ct
     print(f"p:{p}, runtimes:{runtimes_at_each_alpha}")
-    return runtimes_at_each_alpha
+    return runtimes_at_each_alpha[-1]
 
 
 if __name__ == "__main__":
 
     # main()
 
+    p = math.ceil(math.pi * 25)
+    alphas = np.arange(0,.9001,.05)
+    runtimes = []
+    for _ in range(20):
+        runtimes.append(main(alphas, p))
+    print(runtimes)
 
 
     # x = []
     # y = []
 
-    file = open("MARK_16_06_data.txt", "w")
-
-    alphas = np.arange(0,.9001,.05)
-    ps = np.arange(10,50.001,5)
-    runtimes = []
-    for p in ps:
-        tmp = []
-        for _ in range(10):
-            out = main(alphas, p)[-1]
-            file.write(str(out) + ", ")
-            tmp.append(out)
-        file.write("\n")
-        runtimes.append(tmp)
-    print(runtimes)
-    file.close()
+    # file = open("MARK_16_06_data.txt", "w")
+    #
+    # alphas = np.arange(0,.9001,.05)
+    # ps = np.arange(10,50.001,5)
+    # runtimes = []
+    # for p in ps:
+    #     tmp = []
+    #     for _ in range(10):
+    #         out = main(alphas, p)[-1]
+    #         file.write(str(out) + ", ")
+    #         tmp.append(out)
+    #     file.write("\n")
+    #     runtimes.append(tmp)
+    # print(runtimes)
+    # file.close()
 
 
 

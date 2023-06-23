@@ -1,19 +1,21 @@
+import math
+
 INFLUENCE_RADIUS = 1
-TORUS = False
+TORUS = True
 
 #Location Parameters
-N = 50
-M = 50
+N = 100
+M = 100
 
 #Home Location
-HOME_LOC = ((24, 26), (24, 26))
+HOME_LOC = ((50, 50), (50, 50))
 
 #Tasks and Agents
-NUM_AGENTS = 30
+NUM_AGENTS = 100
 K = 0.8
 TOTAL_DEMAND = int(NUM_AGENTS*K)
 #NUM_TASKS = 4
-NUM_TASKS = 15
+NUM_TASKS = 1
 EXPECTED_DEMAND_PER_TASK = TOTAL_DEMAND/NUM_TASKS
 assert(NUM_TASKS >= 1)
 assert(EXPECTED_DEMAND_PER_TASK >= 1)
@@ -31,11 +33,11 @@ levy_cap = 1/L
 
 
 TMR_DNS = .5
-TMR_DST = (min(M, N) / 2) * .7
+TMR_DST = (min(M, N) / 2) * (2/3)
 
 
 T = 10
-# P = 10
+P = math.ceil(math.pi * 25)
 
 ALPHA = 0.5
 
