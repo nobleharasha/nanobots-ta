@@ -3,7 +3,7 @@ from Agent import Agent
 from Vertex import Vertex
 from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt, within_bounds, dir_to_dxdy
 from res_utils import *
-from constants import INFLUENCE_RADIUS, p_m_markers
+from constants import INFLUENCE_RADIUS, p_m_markers, MARKER_DEATH
 import time
 from random import random, choice
 
@@ -166,6 +166,14 @@ class Configuration:
 
 			# Update vertex state
 			vertex.state = new_vertex_state
+
+			vertex.state.tumor_marker_age += 1
+			if vertex.state.tumor_marker_age >= MARKER_DEATH:
+				vertex.state.tumor_marker = False
+			vertex.state.home_marker_age += 1
+			if vertex.state.home_marker_age >= MARKER_DEATH:
+				vertex.state.home_marker = False
+
 
 
 			# signal = 0

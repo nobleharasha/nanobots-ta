@@ -4,14 +4,14 @@ INFLUENCE_RADIUS = 1
 TORUS = True
 
 #Location Parameters
-N = 100
-M = 100
+N = 50
+M = 50
 
 #Home Location
-HOME_LOC = ((50, 50), (50, 50))
+HOME_LOC = ((25, 25), (25, 25))
 
 #Tasks and Agents
-NUM_AGENTS = 100
+NUM_AGENTS = 50
 K = 0.8
 TOTAL_DEMAND = int(NUM_AGENTS*K)
 #NUM_TASKS = 4
@@ -34,6 +34,11 @@ levy_cap = 1/L
 
 TMR_DNS = .5
 TMR_DST = (min(M, N) / 2) * (2/3)
+
+
+MARKER_DEATH = 1000
+
+
 
 
 T = 10

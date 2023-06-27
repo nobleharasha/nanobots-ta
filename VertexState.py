@@ -9,7 +9,10 @@ class VertexState:
 
 		# self.markers = 0
 
-		self.marker = False
+		self.tumor_marker = False
+		self.tumor_marker_age = 0
+		self.home_marker = False
+		self.home_marker_age = 0
 
 		# self.c_f = 0
 		# self.h_f = 0
