@@ -73,11 +73,11 @@ class Configuration:
 		self.P = P
 
 
-	def add_agents(self, agent_locations):
+	def add_agents(self, agent_locations, types):
 
 		for agent_id in range(len(agent_locations)):
 			location = self.vertices[agent_locations[agent_id]]
-			agent = Agent(agent_id, location)
+			agent = Agent(agent_id, location, types[agent_id])
 			# while agent_id in self.agents:
 			# 	agent_id += 1
 			self.agents[agent_id] = agent

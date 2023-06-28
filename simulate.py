@@ -50,8 +50,6 @@ def main(alphas=[], p=10):
             task_locations.add(task_location)
             i += 1
 
-
-
     # for i in range(TOTAL_DEMAND-NUM_TASKS):
     #     task_num = randint(0, NUM_TASKS-1)
     #     tasks[task_num].demand += 1
@@ -64,10 +62,15 @@ def main(alphas=[], p=10):
 
     # Initialize agents
     agent_locations = []
+    types = []
     for i in range(NUM_AGENTS):
         agent_locations.append((randint(HOME_LOC[0][0], HOME_LOC[0][1]), randint(HOME_LOC[1][0], HOME_LOC[1][1])))
+        if i >= 50:
+            types.append("W")
+        else:
+            types.append("S")
 
-    configuration.add_agents(agent_locations)
+    configuration.add_agents(agent_locations, types)
     if graphics_on:
         vc = ViewController(configuration)
     ct = 0

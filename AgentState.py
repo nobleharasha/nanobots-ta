@@ -19,7 +19,7 @@ class AgentState:
 		self.levy_cap = 1/l
 
 		self.phase = "C"  # {"Cancer", "Home"}
-		self.mode = "E"  # {"E", "D", "P", "S"} = {"Explore", "Deliver Drug", "Propagate", "Stationary"}
+		self.mode = "S"  # {"E", "D", "P", "S"} = {"Explore", "Deliver Drug", "Propagate", "Stationary"}
 		self.ct = 0
 		self.found_tumor = False
 		self.prev = ("S", False)
