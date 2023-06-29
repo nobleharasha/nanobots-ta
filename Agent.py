@@ -58,12 +58,14 @@ class Agent:
 
 
 	def random_rw(self):
-		curr_loc = self.location.coords()
-		dirs = []
-		for dir in ['S', 'U', 'D', 'L', 'R']:
-			new_loc = (curr_loc[0] + dir_to_dxdy[dir][0], curr_loc[1] + dir_to_dxdy[dir][1])
-			if within_bounds(new_loc[0], new_loc[1]):
-				dirs.append(dir)
+		# curr_loc = self.location.coords()
+		# dirs = []
+		# for dir in ['S', 'U', 'D', 'L', 'R']:
+		# 	new_loc = (curr_loc[0] + dir_to_dxdy[dir][0], curr_loc[1] + dir_to_dxdy[dir][1])
+		# 	if within_bounds(new_loc[0], new_loc[1]):
+		# 		dirs.append(dir)
+
+		dirs = ['S', 'U', 'D', 'L', 'R']
 		return random.choice(dirs)
 
 
