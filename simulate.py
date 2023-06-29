@@ -1,4 +1,4 @@
-graphics_on = False
+graphics_on = True
 
 if graphics_on:
     import pygame
@@ -13,7 +13,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def main(alphas=[], p=10):
+def main(alphas=[], p=25):
 
     P = int(p)
 
@@ -75,7 +75,7 @@ def main(alphas=[], p=10):
     runtimes_at_each_alpha = []
 
     num_drug_visits = 0
-    while num_drug_visits <= .9 * NUM_AGENTS:
+    while num_drug_visits <= alphas[-1] * NUM_AGENTS:
         ct+=1
         configuration.transition()
         for a in configuration.agents:
@@ -104,14 +104,18 @@ def main(alphas=[], p=10):
 
 if __name__ == "__main__":
 
-    # main()
 
-    p = math.ceil(math.pi * 25)
     alphas = np.arange(0,.9001,.05)
-    runtimes = []
-    for _ in range(20):
-        runtimes.append(main(alphas, p))
-    print(runtimes)
+
+
+    main(alphas)
+
+
+    # p = math.ceil(math.pi * 25)
+    # runtimes = []
+    # for _ in range(20):
+    #     runtimes.append(main(alphas, p))
+    # print(runtimes)
 
 
     # x = []

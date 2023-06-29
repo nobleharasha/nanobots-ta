@@ -20,7 +20,7 @@ class ViewController:
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
 	VERTEX_SIZE = 17
-	FPS = 1000
+	FPS = 30
 	#FPS = 60
 
 	def __init__(self, configuration):
@@ -71,8 +71,6 @@ class ViewController:
 				# 	pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
 				if num_active_agents > 0:
 					pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
-				elif num_beac_agents > 0:
-					pygame.draw.rect(self.SCREEN, self.BLACK, rect, 0)
 				elif self.configuration.vertices[(x,y)].state.is_task:
 					pygame.draw.rect(self.SCREEN, self.YELLOW, rect, 0)
 					# demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.residual_demand), True, self.BLACK)
@@ -81,9 +79,11 @@ class ViewController:
 					pygame.draw.rect(self.SCREEN, self.RED, rect, 0)
 				# elif self.configuration.vertices[(x,y)].state.c_f > 0 and self.configuration.vertices[(x,y)].state.h_f > 0:
 				# 	pygame.draw.rect(self.SCREEN, (255,0,255), rect, 0)
+				elif num_beac_agents > 0:
+					pygame.draw.rect(self.SCREEN, (200,200,200), rect, 0)
 				elif self.configuration.vertices[(x,y)].state.marker:
 					# col = 255 - m(self.configuration.vertices[(x,y)].state.c_f)
-					pygame.draw.rect(self.SCREEN, (100,100,255), rect, 0)
+					pygame.draw.rect(self.SCREEN, (255,255,150), rect, 0)
 					# demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.c_f), True, self.BLACK)
 					#self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
 				# elif self.configuration.vertices[(x,y)].state.h_f > 0:
