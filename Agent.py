@@ -56,12 +56,15 @@ class Agent:
 
 
 	def random_rw(self):
-		curr_loc = self.location.coords()
-		dirs = []
-		for dir in ['S', 'U', 'D', 'L', 'R']:
-			new_loc = (curr_loc[0] + dir_to_dxdy[dir][0], curr_loc[1] + dir_to_dxdy[dir][1])
-			if within_bounds(new_loc[0], new_loc[1]):
-				dirs.append(dir)
+		# curr_loc = self.location.coords()
+		# dirs = []
+		# for dir in ['S', 'U', 'D', 'L', 'R']:
+		# 	new_loc = (curr_loc[0] + dir_to_dxdy[dir][0], curr_loc[1] + dir_to_dxdy[dir][1])
+		# 	if within_bounds(new_loc[0], new_loc[1]):
+		# 		dirs.append(dir)
+		# return random.choice(dirs)
+
+		dirs = ['S', 'U', 'D', 'L', 'R']
 		return random.choice(dirs)
 
 
@@ -118,13 +121,13 @@ class Agent:
 				# 	new_agent_state.large_step = (new_dir, 5)
 
 
-				# if not sig and new_agent_state.prev[1]:
-				# 	new_dir = dir_to_opp[new_agent_state.prev[0]]
-				# else:
-				# 	#new_dir = self.get_travel_direction(new_agent_state)
-				# 	new_dir = self.random_rw()
+				if not sig and new_agent_state.prev[1]:
+					new_dir = dir_to_opp[new_agent_state.prev[0]]
+				else:
+					#new_dir = self.get_travel_direction(new_agent_state)
+					new_dir = self.random_rw()
 
-				new_dir = self.random_rw()
+				# new_dir = self.random_rw()
 
 
 				#new_dir = self.get_travel_direction(new_agent_state)

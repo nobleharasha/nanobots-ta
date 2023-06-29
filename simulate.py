@@ -1,4 +1,4 @@
-graphics_on = False
+graphics_on = True
 
 if graphics_on:
     import pygame
@@ -106,10 +106,14 @@ if __name__ == "__main__":
 
 
     alphas = np.arange(0,.9001,.05)
-    runtimes = []
-    for _ in range(2):
-        runtimes.append(main(alphas, 5))
-    print(runtimes)
+
+    main(alphas)
+
+
+    # runtimes = []
+    # for _ in range(2):
+    #     runtimes.append(main(alphas, 5))
+    # print(runtimes)
 
 
 

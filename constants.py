@@ -2,15 +2,15 @@ INFLUENCE_RADIUS = 1
 TORUS = True
 
 #Location Parameters
-N = 100
-M = 100
+N = 50
+M = 50
 
 #Home Location
 # HOME_LOC = ((int(M / 2) - 1, int(M / 2) + 1), (int(N / 2) - 1, int(N / 2) + 1))
 HOME_LOC = ((int(M / 2), int(M / 2)), (int(N / 2), int(N / 2)))
 
 #Tasks and Agents
-NUM_AGENTS = 100
+NUM_AGENTS = 50
 K = 0.8
 TOTAL_DEMAND = int(NUM_AGENTS*K)
 #NUM_TASKS = 4
@@ -35,7 +35,7 @@ TMR_DNS = .5
 TMR_DST = (min(M, N) / 2) * (2/3)
 
 
-T = 10
+T = 0
 P = 10
 
 ALPHA = 0.5

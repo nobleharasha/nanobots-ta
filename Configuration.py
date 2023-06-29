@@ -168,13 +168,13 @@ class Configuration:
 
 
 			# *******
-			# if not vertex.state.signal and self.new_beac[0]:
-			# 	sig_tmp = False
-			# 	for beac_loc in self.beac_locs:
-			# 		if l2_distance(x, y, beac_loc[0], beac_loc[1]) <= self.beac_rad:
-			# 			sig_tmp = True
-			# 			break
-			# 	vertex.state.signal = sig_tmp
+			if not vertex.state.signal and self.new_beac[0]:
+				sig_tmp = False
+				for beac_loc in self.beac_locs:
+					if l2_distance(x, y, beac_loc[0], beac_loc[1]) <= self.beac_rad:
+						sig_tmp = True
+						break
+				vertex.state.signal = sig_tmp
 
 
 
