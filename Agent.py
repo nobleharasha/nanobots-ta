@@ -9,9 +9,8 @@ import copy
 from Vertex import *
 
 class Agent:
-	def __init__(self,agent_id, vertex, type, l=L):
+	def __init__(self,agent_id, vertex, l=L):
 		self.location = vertex
-		self.type = type
 		# self.type = type
 		self.state = AgentState(agent_id, vertex, l)
 
@@ -76,147 +75,146 @@ class Agent:
 
 
 
-		# if new_agent_state.ct >= 2**(new_agent_state.phaseswitch_ct+1):
-		# 	if new_agent_state.phase == "C":
-		# 		new_agent_state.phase = "H"
-		# 	else:
-		# 		new_agent_state.phase = "C"
-		# 		new_agent_state.found_tumor = False
-		# 	new_agent_state.phaseswitch_ct += 1
-		# 	new_agent_state.ct = 0
-		# 	new_agent_state.prev = ("S", True)
-		# 	return self.location.state, new_agent_state, "S"
-		#
-		# if new_agent_state.mode == "D":
-		# 	if new_agent_state.ct >= 10:
-		# 		new_agent_state.ct = 0
-		# 		new_agent_state.mode = "E"
-		# 	new_dir = "S"
-		# 	mark = True
-		# else:
-		# 	if new_agent_state.phase == "C":
-		# 		mark = self.location.state.tumor_marker
-		# 		if self.location.state.is_task:
-		# 			new_agent_state.mode = "D"
-		# 			new_dir = "S"
-		# 			new_agent_state.found_tumor = True
-		# 			new_agent_state.phase = "H"
-		# 			new_agent_state.ct = 0
-		# 			new_agent_state.phaseswitch_ct += 1
-		# 			new_agent_state.prev = ("S", True)
-		# 		elif not mark and new_agent_state.prev[1]:
-		# 			new_dir = dir_to_opp[new_agent_state.prev[0]]
-		# 		else:
-		# 			new_dir = self.random_rw()
-		# 	else:
-		# 		mark = True
-		# 		if new_agent_state.found_tumor:
-		# 			self.location.state.tumor_marker = True
-		# 		if self.location.state.is_home:
-		# 			new_dir = "S"
-		# 			new_agent_state.found_tumor = False
-		# 			new_agent_state.phase = "C"
-		# 			new_agent_state.ct = 0
-		# 			new_agent_state.phaseswitch_ct += 1
-		# 			new_agent_state.prev = ("S", True)
-		# 		else:
-		# 			new_dir = get_direction_from_destination((25, 25), self.location.coords())
-		#
-		# new_agent_state.prev = (new_dir, mark)
-		# return self.location.state, new_agent_state, new_dir
-
-
-
-
-
-		if self.type == "W":
-			if new_agent_state.mode == "S":
-				new_dir = "S"
-				mark = True
-				if new_agent_state.ct >= 5000:
-					new_agent_state.mode = "E"
-			elif new_agent_state.mode == "D":
-				new_dir = "S"
-				mark = True
+		if new_agent_state.ct >= 2**(new_agent_state.phaseswitch_ct):
+			if new_agent_state.phase == "C":
+				new_agent_state.phase = "H"
 			else:
+				new_agent_state.phase = "C"
+				new_agent_state.found_tumor = False
+			new_agent_state.phaseswitch_ct += 1
+			new_agent_state.ct = 0
+			new_agent_state.prev = ("S", True)
+			return self.location.state, new_agent_state, "S"
+
+		if new_agent_state.mode == "D":
+			new_agent_state.ct = 0
+			new_agent_state.mode = "E"
+			new_dir = "S"
+			mark = True
+		else:
+			if new_agent_state.phase == "C":
 				mark = self.location.state.tumor_marker
 				if self.location.state.is_task:
 					new_agent_state.mode = "D"
-					new_dir = "S"
-				else:
-					if not mark and new_agent_state.prev[1]:
-						new_dir = dir_to_opp[new_agent_state.prev[0]]
-					else:
-						new_dir = self.random_rw()
-		else:
-
-			#if new_agent_state.ct >= 2**(new_agent_state.phaseswitch_ct):
-			if new_agent_state.ct >= 500:
-				if new_agent_state.phase == "C":
-					new_agent_state.phase = "H"
-					new_agent_state.found_home = False
-				else:
-					new_agent_state.phase = "C"
-					new_agent_state.found_tumor = False
-				new_agent_state.phaseswitch_ct += 1
-				new_agent_state.ct = 0
-				new_agent_state.prev = ("S", True)
-				return self.location.state, new_agent_state, "S"
-
-			if new_agent_state.phase == "C":
-				mark = self.location.state.tumor_marker
-				#if new_agent_state.found_home and new_agent_state.home_markers > 0:
-				# if new_agent_state.found_home:
-				# 	self.location.state.home_marker = True
-				# 	self.location.state.home_marker_age = 0
-				# 	new_agent_state.home_markers -= 1
-				if self.location.state.is_task:
-					# new_agent_state.mode = "D"
 					new_dir = "S"
 					new_agent_state.found_tumor = True
 					new_agent_state.phase = "H"
 					new_agent_state.ct = 0
 					new_agent_state.phaseswitch_ct += 1
 					new_agent_state.prev = ("S", True)
-					return self.location.state, new_agent_state, new_dir
+				elif not mark and new_agent_state.prev[1]:
+					new_dir = dir_to_opp[new_agent_state.prev[0]]
 				else:
-					if not mark and new_agent_state.prev[1]:
-						new_dir = dir_to_opp[new_agent_state.prev[0]]
-					else:
-						new_dir = self.random_rw()
-						if new_agent_state.found_home:
-							self.location.state.home_marker = True
-							self.location.state.home_marker_age = 0
-							new_agent_state.home_markers -= 1
+					new_dir = self.random_rw()
 			else:
-				mark = self.location.state.home_marker
-				#if new_agent_state.found_tumor and new_agent_state.tumor_markers > 0:
-				# if new_agent_state.found_tumor:
-				# 	self.location.state.tumor_marker = True
-				# 	self.location.state.tumor_marker_age = 0
-				# 	new_agent_state.tumor_markers -= 1
-
-
-				# if self.location.state.is_task:
-				# 	new_agent_state.mode = "D"
-
+				mark = True
+				if new_agent_state.found_tumor:
+					self.location.state.tumor_marker = True
 				if self.location.state.is_home:
 					new_dir = "S"
-					new_agent_state.found_home = True
+					new_agent_state.found_tumor = False
 					new_agent_state.phase = "C"
 					new_agent_state.ct = 0
 					new_agent_state.phaseswitch_ct += 1
 					new_agent_state.prev = ("S", True)
-					return self.location.state, new_agent_state, new_dir
 				else:
-					if not mark and new_agent_state.prev[1]:
-						new_dir = dir_to_opp[new_agent_state.prev[0]]
-					else:
-						new_dir = self.random_rw()
-						if new_agent_state.found_tumor:
-							self.location.state.tumor_marker = True
-							self.location.state.tumor_marker_age = 0
-							new_agent_state.tumor_markers -= 1
+					new_dir = get_direction_from_destination((25, 25), self.location.coords())
 
 		new_agent_state.prev = (new_dir, mark)
 		return self.location.state, new_agent_state, new_dir
+
+
+
+
+
+		# if self.type == "W":
+		# 	if new_agent_state.mode == "S":
+		# 		new_dir = "S"
+		# 		mark = True
+		# 		if new_agent_state.ct >= 5000:
+		# 			new_agent_state.mode = "E"
+		# 	elif new_agent_state.mode == "D":
+		# 		new_dir = "S"
+		# 		mark = True
+		# 	else:
+		# 		mark = self.location.state.tumor_marker
+		# 		if self.location.state.is_task:
+		# 			new_agent_state.mode = "D"
+		# 			new_dir = "S"
+		# 		else:
+		# 			if not mark and new_agent_state.prev[1]:
+		# 				new_dir = dir_to_opp[new_agent_state.prev[0]]
+		# 			else:
+		# 				new_dir = self.random_rw()
+		# else:
+		#
+		# 	#if new_agent_state.ct >= 2**(new_agent_state.phaseswitch_ct):
+		# 	if new_agent_state.ct >= 500:
+		# 		if new_agent_state.phase == "C":
+		# 			new_agent_state.phase = "H"
+		# 			new_agent_state.found_home = False
+		# 		else:
+		# 			new_agent_state.phase = "C"
+		# 			new_agent_state.found_tumor = False
+		# 		new_agent_state.phaseswitch_ct += 1
+		# 		new_agent_state.ct = 0
+		# 		new_agent_state.prev = ("S", True)
+		# 		return self.location.state, new_agent_state, "S"
+		#
+		# 	if new_agent_state.phase == "C":
+		# 		mark = self.location.state.tumor_marker
+		# 		#if new_agent_state.found_home and new_agent_state.home_markers > 0:
+		# 		# if new_agent_state.found_home:
+		# 		# 	self.location.state.home_marker = True
+		# 		# 	self.location.state.home_marker_age = 0
+		# 		# 	new_agent_state.home_markers -= 1
+		# 		if self.location.state.is_task:
+		# 			# new_agent_state.mode = "D"
+		# 			new_dir = "S"
+		# 			new_agent_state.found_tumor = True
+		# 			new_agent_state.phase = "H"
+		# 			new_agent_state.ct = 0
+		# 			new_agent_state.phaseswitch_ct += 1
+		# 			new_agent_state.prev = ("S", True)
+		# 			return self.location.state, new_agent_state, new_dir
+		# 		else:
+		# 			if not mark and new_agent_state.prev[1]:
+		# 				new_dir = dir_to_opp[new_agent_state.prev[0]]
+		# 			else:
+		# 				new_dir = self.random_rw()
+		# 				if new_agent_state.found_home:
+		# 					self.location.state.home_marker = True
+		# 					self.location.state.home_marker_age = 0
+		# 					new_agent_state.home_markers -= 1
+		# 	else:
+		# 		mark = self.location.state.home_marker
+		# 		#if new_agent_state.found_tumor and new_agent_state.tumor_markers > 0:
+		# 		# if new_agent_state.found_tumor:
+		# 		# 	self.location.state.tumor_marker = True
+		# 		# 	self.location.state.tumor_marker_age = 0
+		# 		# 	new_agent_state.tumor_markers -= 1
+		#
+		#
+		# 		# if self.location.state.is_task:
+		# 		# 	new_agent_state.mode = "D"
+		#
+		# 		if self.location.state.is_home:
+		# 			new_dir = "S"
+		# 			new_agent_state.found_home = True
+		# 			new_agent_state.phase = "C"
+		# 			new_agent_state.ct = 0
+		# 			new_agent_state.phaseswitch_ct += 1
+		# 			new_agent_state.prev = ("S", True)
+		# 			return self.location.state, new_agent_state, new_dir
+		# 		else:
+		# 			if not mark and new_agent_state.prev[1]:
+		# 				new_dir = dir_to_opp[new_agent_state.prev[0]]
+		# 			else:
+		# 				new_dir = self.random_rw()
+		# 				if new_agent_state.found_tumor:
+		# 					self.location.state.tumor_marker = True
+		# 					self.location.state.tumor_marker_age = 0
+		# 					new_agent_state.tumor_markers -= 1
+		#
+		# new_agent_state.prev = (new_dir, mark)
+		# return self.location.state, new_agent_state, new_dir

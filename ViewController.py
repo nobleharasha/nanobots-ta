@@ -20,7 +20,7 @@ class ViewController:
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
 	VERTEX_SIZE = 17
-	FPS = 1000
+	FPS = 60
 	#FPS = 60
 
 	def __init__(self, configuration):
@@ -59,8 +59,7 @@ class ViewController:
 				# num_beac_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode != "E"])
 				#marker_amt = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.type == "C"])
 
-				num_scout_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.type == "S"])
-				num_worker_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.type == "W"])
+				num_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode != "D"])
 
 				# signal = 0
 				# for beac_loc in beacon_locs:
@@ -72,9 +71,7 @@ class ViewController:
 				# if self.configuration.vertices[(x,y)].state.markers > 0:
 				# 	col = float(m(self.configuration.vertices[(x,y)].state.markers))
 				# 	pygame.draw.rect(self.SCREEN, (col,col,255), rect, 0)
-				if num_worker_agents > 0:
-					pygame.draw.rect(self.SCREEN, self.BLUE, rect, 0)
-				elif num_scout_agents > 0:
+				if num_agents > 0:
 					pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
 				elif self.configuration.vertices[(x,y)].state.is_task:
 					pygame.draw.rect(self.SCREEN, self.YELLOW, rect, 0)

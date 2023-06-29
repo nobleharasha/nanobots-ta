@@ -73,11 +73,11 @@ class Configuration:
 		self.P = P
 
 
-	def add_agents(self, agent_locations, types):
+	def add_agents(self, agent_locations):
 
 		for agent_id in range(len(agent_locations)):
 			location = self.vertices[agent_locations[agent_id]]
-			agent = Agent(agent_id, location, types[agent_id])
+			agent = Agent(agent_id, location)
 			# while agent_id in self.agents:
 			# 	agent_id += 1
 			self.agents[agent_id] = agent
@@ -167,12 +167,12 @@ class Configuration:
 			# Update vertex state
 			vertex.state = new_vertex_state
 
-			vertex.state.tumor_marker_age += 1
-			if vertex.state.tumor_marker_age >= MARKER_DEATH:
-				vertex.state.tumor_marker = False
-			vertex.state.home_marker_age += 1
-			if vertex.state.home_marker_age >= MARKER_DEATH:
-				vertex.state.home_marker = False
+			# vertex.state.tumor_marker_age += 1
+			# if vertex.state.tumor_marker_age >= MARKER_DEATH:
+			# 	vertex.state.tumor_marker = False
+			# vertex.state.home_marker_age += 1
+			# if vertex.state.home_marker_age >= MARKER_DEATH:
+			# 	vertex.state.home_marker = False
 
 
 

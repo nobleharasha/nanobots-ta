@@ -11,7 +11,7 @@ M = 50
 HOME_LOC = ((25, 25), (25, 25))
 
 #Tasks and Agents
-NUM_AGENTS = 75
+NUM_AGENTS = 50
 K = 0.8
 TOTAL_DEMAND = int(NUM_AGENTS*K)
 #NUM_TASKS = 4
