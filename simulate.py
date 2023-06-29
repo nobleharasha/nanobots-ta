@@ -73,8 +73,7 @@ def main(alphas=[], p=10):
     runtimes_at_each_alpha = []
 
     num_drug_visits = 0
-    #while num_drug_visits <= .9 * NUM_AGENTS:
-    while True:
+    while num_drug_visits <= .9 * NUM_AGENTS:
         ct+=1
         configuration.transition()
         for a in configuration.agents:
