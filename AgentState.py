@@ -1,29 +1,31 @@
-import random
-from constants import L
+from constants import *
 
 class AgentState:
 
-	def __init__(self, agent_id, vertex, l=L):
-		self.reset(agent_id, vertex, l)
+	def __init__(self, agent_id, type, vertex, claw_markers=set(), receptor_markers=set(), payload=None):
+		self.reset(agent_id, type, vertex, claw_markers, receptor_markers, payload)
 
-	def reset(self, agent_id, vertex, l):
-		# Initial parameters
+
+	def reset(self, agent_id, type, vertex, claw_markers=set(), receptor_markers=set(), payload=None):
 		self.id = agent_id
-		self.L = l
 
-		# Levy parameters
-		self.angle = 0
-		self.starting_point = (vertex.x, vertex.y)
-		self.travel_distance = 0
-		self.levy_cap = 1/l
+		self.claw_markers = claw_markers
+		self.claws = {}
+		for m in claw_markers:
+			self.claws[m] = -1
 
-		self.mode = "E"  # {"E", "D", "P", "S"} = {"Explore", "Deliver Drug", "Propagate", "Stationary"}
-		self.ct = 0
-		self.prop_time = 0
+		self.receptor_markers = receptor_markers
+		self.receptors = {}
+		for m in receptor_markers:
+			self.receptors[m] = 0
 
-		self.prev = ("S", False)
+		self.payload = payload
 
+		self.bound = False
 
+		self.type = type
 
-		# self.no_tmr_ct = 0
-		# self.large_step = None
+		if type == "S":
+			self.ct = SCOUT_TIME
+		else:
+			self.ct = 0

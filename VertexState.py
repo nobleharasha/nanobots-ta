@@ -1,11 +1,11 @@
+from constants import MARKERS
+
+
 class VertexState:
 
-	def __init__(self, is_task=False, demand=None, task_location=None, is_home = False):
-		self.is_task = is_task
+	def __init__(self, is_home=False):
 		self.is_home = is_home
-		self.demand = demand
-		self.residual_demand = demand
-		self.task_location = task_location
 
-		#self.sig = 0
-		self.signal = False
+		self.chemicals = {}
+		for m in MARKERS:
+			self.chemicals[m] = 0

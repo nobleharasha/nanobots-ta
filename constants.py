@@ -1,50 +1,24 @@
-INFLUENCE_RADIUS = 1
+INFLUENCE_RADIUS = 0
+
 TORUS = True
 
-#Location Parameters
-N = 50
+N = 1
 M = 50
 
-#Home Location
-# HOME_LOC = ((int(M / 2) - 1, int(M / 2) + 1), (int(N / 2) - 1, int(N / 2) + 1))
-HOME_LOC = ((int(M / 2), int(M / 2)), (int(N / 2), int(N / 2)))
+INJECT_LOC = ((25,25), (0,0))
 
-#Tasks and Agents
 NUM_AGENTS = 50
-K = 0.8
-TOTAL_DEMAND = int(NUM_AGENTS*K)
-#NUM_TASKS = 4
-NUM_TASKS = 1
-EXPECTED_DEMAND_PER_TASK = TOTAL_DEMAND/NUM_TASKS
-assert(NUM_TASKS >= 1)
-assert(EXPECTED_DEMAND_PER_TASK >= 1)
+PROP_SCOUTS = 0.6
 
-#General Constants
-INF = 1000000000
+CELLS_PER_LOC = (5,5)
+PROP_CANCER = 0.05  # percent (probability) of total cells in he given environment that are cancerous (maybe later something about favoring clustering to be more realistic, precise)
+PROP_MARKED_GOOD = 0.01  # probability that an individual good cell has the "cancer" marker
+MARKERS = {"m_ca", "m_sc", "chemo"}
 
-#TAHH
-L = 1/100
+SCOUT_TIME = M * 5
+BOT_LIFESPAN = M * 100
 
-#Levy Flight Constants
-levy_loc = 10
-levy_cap = 1/L
+P1 = 0.1
+P2 = lambda x : min(1, 2*x / NUM_AGENTS)
 
-
-
-TMR_DNS = .5
-TMR_DST = (min(M, N) / 2) * (2/3)
-
-
-T = 0
-P = 10
-
-ALPHA = 0.5
-
-EPSILON = 0.05
-
-p_m = 0.05
-p_m_beacons = 0.025
-
-# BEAC_RAD = 10
-
-p_e = 0.05
+GAMMA = 10
