@@ -56,7 +56,7 @@ class ViewController:
 			for y in range(0, self.configuration.N):
 				rect = pygame.Rect(x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1, self.VERTEX_SIZE-2, self.VERTEX_SIZE-2)
 				num_active_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode == "E"])
-				num_beac_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode != "E"])
+				num_beac_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.mode == "P"])
 				#marker_amt = len([_ for _ in self.configuration.vertices[(x,y)].agents if _.state.type == "C"])
 
 				# signal = 0
