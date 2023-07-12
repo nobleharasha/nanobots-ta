@@ -1,9 +1,9 @@
 import multiprocessing as mp
 from Agent import Agent
 from Vertex import Vertex
-from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt, within_bounds, dir_to_dxdy
+from geo_utils import generate_local_mapping, get_coords_from_movement, signal_amt, within_bounds, dir_to_dxdy, l2_distance
 from res_utils import *
-from constants import INFLUENCE_RADIUS, p_m_markers
+from constants import INFLUENCE_RADIUS, p_m_markers, M, N
 import time
 from random import random, choice
 
@@ -166,6 +166,9 @@ class Configuration:
 
 			# Update vertex state
 			vertex.state = new_vertex_state
+
+			if self.vertices[(int(M / 2), int(N / 2))].state.num_bound > 0:
+				vertex.state.fuel = max(0, -1 * ( l2_distance(int(M / 2), int(N / 2), x, y) / self.vertices[(int(M / 2), int(N / 2))].state.num_bound )**2 + 1)
 
 
 			# signal = 0

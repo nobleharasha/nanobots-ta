@@ -70,6 +70,67 @@ class Agent:
 
 
 	def generate_transition(self, local_vertex_mapping, P):
+		new_agent_state = copy.copy(self.state)
+		self.location.state.visits += 1
+
+
+		if new_agent_state.bound:
+			new_dir = "S"
+		elif self.location.state.cancer:
+			new_agent_state.bound = True
+			self.location.state.num_bound += 1
+			new_dir = "S"
+		else:
+			if self.location.state.fuel > 0:
+				if random.random() <= self.location.state.fuel:
+					new_dir = get_direction_from_destination( (int(M / 2), int(N / 2)), (self.location.x, self.location.y) )
+					if random.random() <= 0.1:
+						new_dir = random.choice(["U", "D", "L", "R"])
+				else:
+					new_dir = "S"
+			else:
+				if random.random() <= 0.1:
+					new_dir = random.choice(["U", "D", "L", "R"])
+				else:
+					new_dir = "S"
+
+
+
+
+		# if new_agent_state.ct > 0:
+		# 	new_dir = new_agent_state.curr_dir
+		# 	new_agent_state.ct = new_agent_state.ct - 1
+		# else:
+		# 	# self.location.state.visits += 1
+		# 	if random.random() <= 0.1 and not new_agent_state.one_stepped:
+		# 		new_dir = new_agent_state.curr_dir
+		# 		new_agent_state.one_stepped = True
+		# 	else:
+		# 		new_agent_state.one_stepped = False
+		# 		new_agent_state.ct = self.location.state.residual_fuel
+		# 		#self.location.state.residual_fuel = 0
+		# 		new_dir = "S"
+		#
+		# 		others = ["U", "D", "L", "R"]
+		# 		opp = dir_to_opp[new_agent_state.curr_dir]
+		# 		others.remove(new_agent_state.curr_dir)
+		# 		others.remove(opp)
+		# 		prob_num = random.random()
+		# 		if prob_num <= 0.1:
+		# 			new_agent_state.curr_dir = opp
+		# 		elif prob_num <= 0.1 + 0.2 + 0.2:
+		# 			new_agent_state.curr_dir = random.choice(others)
+
+
+
+
+		return self.location.state, new_agent_state, new_dir
+
+
+
+
+
+
 		# new_agent_state = copy.copy(self.state)
 		# new_agent_state.ct += 1
 		# if self.type == "C":
@@ -109,41 +170,41 @@ class Agent:
 
 
 
-		new_agent_state = copy.copy(self.state)
-		new_agent_state.ct += 1
-		mark = self.location.state.marker
-
-		if new_agent_state.mode == "S":
-			new_dir = "S"
-		elif new_agent_state.mode == "D":
-			new_dir = "S"
-			if new_agent_state.ct >= T:
-				new_agent_state.mode = "P"
-				new_agent_state.ct = 0
-		elif new_agent_state.mode == "P":
-			self.location.state.marker = True
-			if new_agent_state.ct >= P:
-				new_dir = "S"
-				new_agent_state.mode = "S"
-				new_agent_state.ct = 0
-			else:
-				new_dir = self.random_rw()
-		else:  # mode == "E"
-			if self.location.state.is_task:
-				new_dir = "S"
-				new_agent_state.mode = "D"
-				new_agent_state.ct = 0
-				# new_agent_state.no_tmr_ct = 0
-			else:
-				if not mark and new_agent_state.prev[1]:
-					new_dir = dir_to_opp[new_agent_state.prev[0]]
-				else:
-					new_dir = self.random_rw()
-
-				# new_dir = self.random_rw()
-
-		new_agent_state.prev = (new_dir, mark)
-		return self.location.state, new_agent_state, new_dir
+		# new_agent_state = copy.copy(self.state)
+		# new_agent_state.ct += 1
+		# mark = self.location.state.marker
+		#
+		# if new_agent_state.mode == "S":
+		# 	new_dir = "S"
+		# elif new_agent_state.mode == "D":
+		# 	new_dir = "S"
+		# 	if new_agent_state.ct >= T:
+		# 		new_agent_state.mode = "P"
+		# 		new_agent_state.ct = 0
+		# elif new_agent_state.mode == "P":
+		# 	self.location.state.marker = True
+		# 	if new_agent_state.ct >= P:
+		# 		new_dir = "S"
+		# 		new_agent_state.mode = "S"
+		# 		new_agent_state.ct = 0
+		# 	else:
+		# 		new_dir = self.random_rw()
+		# else:  # mode == "E"
+		# 	if self.location.state.is_task:
+		# 		new_dir = "S"
+		# 		new_agent_state.mode = "D"
+		# 		new_agent_state.ct = 0
+		# 		# new_agent_state.no_tmr_ct = 0
+		# 	else:
+		# 		if not mark and new_agent_state.prev[1]:
+		# 			new_dir = dir_to_opp[new_agent_state.prev[0]]
+		# 		else:
+		# 			new_dir = self.random_rw()
+		#
+		# 		# new_dir = self.random_rw()
+		#
+		# new_agent_state.prev = (new_dir, mark)
+		# return self.location.state, new_agent_state, new_dir
 
 
 

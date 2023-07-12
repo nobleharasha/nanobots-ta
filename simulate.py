@@ -13,102 +13,57 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def main(alphas=[], p=25):
-
-    P = int(p)
+def main():
 
     configuration  = Configuration(N, M, P, TORUS)
-    home = VertexState(is_home=True)
-
-    for x in range(HOME_LOC[0][0], HOME_LOC[0][1]+1):
-        for y in range(HOME_LOC[1][0], HOME_LOC[1][1]+1):
-            configuration.vertices[(x,y)].state = VertexState(is_home=True)
-
-    tasks = []
-    task_locations = set()
-    tasks.append(VertexState(is_task=True, demand=1, task_location=tumor_start))
-    task_locations.add(tumor_start)
-    i = 1
-    while i < NUM_TASKS:
-        task_location = (randint(0,M-1), randint(0,N-1))
-        if task_location in task_locations or configuration.vertices[task_location].state.is_home:
-            continue
-        neighbor_ct = 0
-        for dx in range(-1,1+1):
-            for dy in range(-1,1+1):
-                if abs(dx) > 0 and abs(dy) > 0:
-                    pass
-                elif (task_location[0]+dx, task_location[1]+dy) in task_locations:
-                    neighbor_ct += 1
-        if neighbor_ct == 0:
-            continue
-        #low density -> higher prob as neighbor_ct lower
-        #high density -> lower prob as neighbor_ct higher
-        TMR_DNS_mapped = (TMR_DNS - 0.5) * 5
-        if random() <= (neighbor_ct / 4)**TMR_DNS_mapped:
-            tasks.append(VertexState(is_task=True, demand=1, task_location=task_location))
-            task_locations.add(task_location)
-            i += 1
-
-
-
-    # for i in range(TOTAL_DEMAND-NUM_TASKS):
-    #     task_num = randint(0, NUM_TASKS-1)
-    #     tasks[task_num].demand += 1
-    #     tasks[task_num].residual_demand += 1
-
-
-    for task_state in tasks:
-        configuration.vertices[task_state.task_location].state = task_state
-
+    configuration.vertices[(int(M / 2), int(N / 2))].state.cancer = True
 
     # Initialize agents
     agent_locations = []
     for i in range(NUM_AGENTS):
-        agent_locations.append((randint(HOME_LOC[0][0], HOME_LOC[0][1]), randint(HOME_LOC[1][0], HOME_LOC[1][1])))
+        agent_locations.append((0, 0))
 
     configuration.add_agents(agent_locations)
     if graphics_on:
         vc = ViewController(configuration)
     ct = 0
-
-    runtimes_at_each_alpha = []
-
-    num_drug_visits = 0
-    while num_drug_visits <= alphas[-1] * NUM_AGENTS:
+    while configuration.vertices[(int(M / 2), int(N / 2))].state.num_bound <= NUM_AGENTS:
         ct+=1
         configuration.transition()
-        for a in configuration.agents:
-            if configuration.agents[a].state.mode == "D":
-                configuration.drug_visits_peragent[a] = 1
-        num_drug_visits = sum(list(configuration.drug_visits_peragent.values()))
-
-        for i in range(len(alphas)):
-            if num_drug_visits >= NUM_AGENTS * alphas[i] and len(runtimes_at_each_alpha) <= i:
-                runtimes_at_each_alpha.append(ct)
-                print(ct)
 
         if graphics_on:
             vc.update()
 
-    # print('\n')
-
-
     if graphics_on:
         vc.quit()
 
-    #return ct
-    print(f"p:{p}, runtimes:{runtimes_at_each_alpha}")
-    return runtimes_at_each_alpha[-1]
+    # fuel_to_visits = {}
+    # fuel_to_visits_avg = {}
+    # for i in [0,4,8]:
+    #     fuel_to_visits[i] = [0,0]
+    #     fuel_to_visits_avg[i] = 0
+    #
+    # for x in range(M):
+    #     for y in range(N):
+    #         vertex = configuration.vertices[(x,y)]
+    #         fuel = vertex.state.fuel
+    #         fuel_to_visits[fuel][0] += vertex.state.visits
+    #         fuel_to_visits[fuel][1] += 1
+    #
+    #
+    # for i in fuel_to_visits_avg:
+    #     fuel_to_visits_avg[i] = fuel_to_visits[i][0] / fuel_to_visits[i][1]
+    #
+    # return fuel_to_visits_avg
+
+    return ct
 
 
 if __name__ == "__main__":
 
 
-    alphas = np.arange(0,.9001,.05)
 
-
-    main(alphas)
+    print(main())
 
 
     # p = math.ceil(math.pi * 25)

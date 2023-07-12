@@ -9,6 +9,11 @@ class AgentState:
 	def reset(self, agent_id, vertex, l):
 		# Initial parameters
 		self.id = agent_id
+
+
+
+
+
 		self.L = l
 
 		# Levy parameters
@@ -16,6 +21,9 @@ class AgentState:
 		self.starting_point = (vertex.x, vertex.y)
 		self.travel_distance = 0
 		self.levy_cap = 1/l
+
+
+
 
 		self.mode = "E"  # {"E", "D", "P", "S"} = {"Explore", "Deliver Drug", "Propagate", "Stationary"}
 		self.ct = 0
@@ -25,3 +33,9 @@ class AgentState:
 
 		# self.found_tumor = False
 		# self.load = 100
+
+		self.curr_dir = random.choice(["U", "D", "L", "R"])
+
+		self.one_stepped = False
+
+		self.bound = False
