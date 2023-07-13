@@ -3,7 +3,7 @@ import sys
 from scipy.interpolate import interp1d
 from geo_utils import signal_amt
 from random import uniform
-from constants import HOME_LOC, TMR_DST, M, N
+from constants import HOME_LOC, TMR_DST, M, N, NUM_AGENTS
 from math import pi, cos, sin
 
 home_center = (HOME_LOC[0][0] + int((HOME_LOC[1][0] - HOME_LOC[0][0]) / 2), HOME_LOC[0][1] + int((HOME_LOC[1][1] - HOME_LOC[0][1]) / 2))
@@ -20,7 +20,7 @@ class ViewController:
 	BLUE = (0,0,200)
 	YELLOW = (200, 200, 0)
 	VERTEX_SIZE = 17
-	FPS = 60
+	FPS = 1000
 
 	def __init__(self, configuration):
 		self.configuration = configuration
@@ -47,16 +47,17 @@ class ViewController:
 				rect = pygame.Rect(x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1, self.VERTEX_SIZE-2, self.VERTEX_SIZE-2)
 
 				num_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if not _.state.bound])
-				fuel = self.configuration.vertices[(x,y)].state.fuel
+				fuel_m = min(5 * self.configuration.vertices[(x,y)].state.fuel / NUM_AGENTS, 1)
 
 				if (x, y) == (int(M / 2), int(N / 2)):
 					pygame.draw.rect(self.SCREEN, self.YELLOW, rect, 0)
 				elif num_agents > 0:
 					pygame.draw.rect(self.SCREEN, self.GREEN, rect, 0)
 				else:
-					pygame.draw.rect(self.SCREEN, (255*(1-fuel), 255*(1-fuel), 255), rect, 0)
+					pygame.draw.rect(self.SCREEN, (255*(1-fuel_m), 255*(1-fuel_m), 255), rect, 0)
+					#pygame.draw.rect(self.SCREEN, self.WHITE, rect, 0)
 
-				# demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.residual_fuel), True, self.BLACK)
+				# demand_text = self.font.render(str(self.configuration.vertices[(x,y)].state.fuel), True, self.BLACK)
 				# self.SCREEN.blit(demand_text, (x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1))
 
 	def update(self):

@@ -168,7 +168,7 @@ class Configuration:
 			vertex.state = new_vertex_state
 
 			if self.vertices[(int(M / 2), int(N / 2))].state.num_bound > 0:
-				vertex.state.fuel = max(0, -1 * ( l2_distance(int(M / 2), int(N / 2), x, y) / self.vertices[(int(M / 2), int(N / 2))].state.num_bound )**2 + 1)
+				vertex.state.fuel = max(0, round(-1 * ( l2_distance(int(M / 2), int(N / 2), x, y)**2 / (0.5 * self.vertices[(int(M / 2), int(N / 2))].state.num_bound) ) + (0.5 * self.vertices[(int(M / 2), int(N / 2))].state.num_bound) ))
 
 
 			# signal = 0

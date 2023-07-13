@@ -74,52 +74,58 @@ class Agent:
 		self.location.state.visits += 1
 
 
+		# if new_agent_state.bound:
+		# 	new_dir = "S"
+		# elif self.location.state.cancer:
+		# 	new_agent_state.bound = True
+		# 	self.location.state.num_bound += 1
+		# 	new_dir = "S"
+		# else:
+		# 	if self.location.state.fuel > 0:
+		# 		if random.random() <= self.location.state.fuel:
+		# 			new_dir = get_direction_from_destination( (int(M / 2), int(N / 2)), (self.location.x, self.location.y) )
+		# 			if random.random() <= 0.1:
+		# 				new_dir = random.choice(["U", "D", "L", "R"])
+		# 		else:
+		# 			new_dir = "S"
+		# 	else:
+		# 		if random.random() <= 0.1:
+		# 			new_dir = random.choice(["U", "D", "L", "R"])
+		# 		else:
+		# 			new_dir = "S"
+
+
+
+
 		if new_agent_state.bound:
 			new_dir = "S"
 		elif self.location.state.cancer:
+			new_dir = "S"
 			new_agent_state.bound = True
 			self.location.state.num_bound += 1
-			new_dir = "S"
+		elif new_agent_state.ct > 0:
+			new_dir = new_agent_state.curr_dir
+			new_agent_state.ct = new_agent_state.ct - 1
 		else:
-			if self.location.state.fuel > 0:
-				if random.random() <= self.location.state.fuel:
-					new_dir = get_direction_from_destination( (int(M / 2), int(N / 2)), (self.location.x, self.location.y) )
-					if random.random() <= 0.1:
-						new_dir = random.choice(["U", "D", "L", "R"])
-				else:
-					new_dir = "S"
+			# self.location.state.visits += 1
+			if random.random() <= 0.1 and not new_agent_state.one_stepped:
+				new_dir = new_agent_state.curr_dir
+				new_agent_state.one_stepped = True
 			else:
-				if random.random() <= 0.1:
-					new_dir = random.choice(["U", "D", "L", "R"])
-				else:
-					new_dir = "S"
+				new_agent_state.one_stepped = False
+				new_agent_state.ct = self.location.state.fuel
+				#self.location.state.residual_fuel = 0
+				new_dir = "S"
 
-
-
-
-		# if new_agent_state.ct > 0:
-		# 	new_dir = new_agent_state.curr_dir
-		# 	new_agent_state.ct = new_agent_state.ct - 1
-		# else:
-		# 	# self.location.state.visits += 1
-		# 	if random.random() <= 0.1 and not new_agent_state.one_stepped:
-		# 		new_dir = new_agent_state.curr_dir
-		# 		new_agent_state.one_stepped = True
-		# 	else:
-		# 		new_agent_state.one_stepped = False
-		# 		new_agent_state.ct = self.location.state.residual_fuel
-		# 		#self.location.state.residual_fuel = 0
-		# 		new_dir = "S"
-		#
-		# 		others = ["U", "D", "L", "R"]
-		# 		opp = dir_to_opp[new_agent_state.curr_dir]
-		# 		others.remove(new_agent_state.curr_dir)
-		# 		others.remove(opp)
-		# 		prob_num = random.random()
-		# 		if prob_num <= 0.1:
-		# 			new_agent_state.curr_dir = opp
-		# 		elif prob_num <= 0.1 + 0.2 + 0.2:
-		# 			new_agent_state.curr_dir = random.choice(others)
+				others = ["U", "D", "L", "R"]
+				opp = dir_to_opp[new_agent_state.curr_dir]
+				others.remove(new_agent_state.curr_dir)
+				others.remove(opp)
+				prob_num = random.random()
+				if prob_num <= 0.1:
+					new_agent_state.curr_dir = opp
+				elif prob_num <= 0.1 + 0.2 + 0.2:
+					new_agent_state.curr_dir = random.choice(others)
 
 
 
