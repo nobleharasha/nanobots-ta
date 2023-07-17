@@ -71,7 +71,32 @@ class Agent:
 
 	def generate_transition(self, local_vertex_mapping, P):
 		new_agent_state = copy.copy(self.state)
-		self.location.state.visits += 1
+		#self.location.state.visits += 1
+
+
+
+		if new_agent_state.ct > 0:
+			new_dir = new_agent_state.curr_dir
+			new_agent_state.ct -= 1
+		elif self.location.state.fuel > 0:
+		#else:
+			new_agent_state.curr_dir = random.choice(["U", "D", "L", "R"])
+			new_dir = "S"
+			dir_to_target = get_direction_from_destination((int(M / 2), int(N / 2)), self.location.coords())
+			if new_agent_state.curr_dir == dir_to_target:
+				new_agent_state.ct = 5
+			elif new_agent_state.curr_dir == dir_to_opp[dir_to_target]:
+				new_agent_state.ct = 1
+			else:
+				new_agent_state.ct = 2
+		else:
+			new_agent_state.curr_dir = random.choice(["U", "D", "L", "R"])
+			new_dir = new_agent_state.curr_dir
+			new_agent_state.ct = 1
+
+
+
+
 
 
 		# if new_agent_state.bound:
@@ -97,40 +122,47 @@ class Agent:
 
 
 
-		if new_agent_state.bound:
-			new_dir = "S"
-		elif self.location.state.cancer:
-			new_dir = "S"
-			new_agent_state.bound = True
-			self.location.state.num_bound += 1
-		elif new_agent_state.ct > 0:
-			new_dir = new_agent_state.curr_dir
-			new_agent_state.ct = new_agent_state.ct - 1
-		else:
-			# self.location.state.visits += 1
-			if random.random() <= 0.1 and not new_agent_state.one_stepped:
-				new_dir = new_agent_state.curr_dir
-				new_agent_state.one_stepped = True
-			else:
-				new_agent_state.one_stepped = False
-				new_agent_state.ct = self.location.state.fuel
-				#self.location.state.residual_fuel = 0
-				new_dir = "S"
 
-				others = ["U", "D", "L", "R"]
-				opp = dir_to_opp[new_agent_state.curr_dir]
-				others.remove(new_agent_state.curr_dir)
-				others.remove(opp)
-				prob_num = random.random()
-				if prob_num <= 0.1:
-					new_agent_state.curr_dir = opp
-				elif prob_num <= 0.1 + 0.2 + 0.2:
-					new_agent_state.curr_dir = random.choice(others)
+
+
+		# if new_agent_state.bound:
+		# 	new_dir = "S"
+		# elif self.location.state.cancer:
+		# 	new_dir = "S"
+		# 	new_agent_state.bound = True
+		# 	self.location.state.num_bound += 1
+		# elif new_agent_state.ct > 0:
+		# 	new_dir = new_agent_state.curr_dir
+		# 	new_agent_state.ct = new_agent_state.ct - 1
+		# else:
+		# 	# self.location.state.visits += 1
+		# 	if random.random() <= 0.1 and not new_agent_state.one_stepped:
+		# 		new_dir = new_agent_state.curr_dir
+		# 		new_agent_state.one_stepped = True
+		# 	else:
+		# 		new_agent_state.one_stepped = False
+		# 		new_agent_state.ct = self.location.state.fuel
+		# 		#self.location.state.residual_fuel = 0
+		# 		new_dir = "S"
+		#
+		# 		others = ["U", "D", "L", "R"]
+		# 		opp = dir_to_opp[new_agent_state.curr_dir]
+		# 		others.remove(new_agent_state.curr_dir)
+		# 		others.remove(opp)
+		# 		prob_num = random.random()
+		# 		if prob_num <= 0.1:
+		# 			new_agent_state.curr_dir = opp
+		# 		elif prob_num <= 0.1 + 0.2 + 0.2:
+		# 			new_agent_state.curr_dir = random.choice(others)
+
 
 
 
 
 		return self.location.state, new_agent_state, new_dir
+
+
+
 
 
 

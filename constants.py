@@ -4,14 +4,14 @@ INFLUENCE_RADIUS = 1
 TORUS = True
 
 #Location Parameters
-N = 25
-M = 25
+N = 50
+M = 50
 
 #Home Location
 HOME_LOC = ((25, 25), (25, 25))
 
 #Tasks and Agents
-NUM_AGENTS = 25
+NUM_AGENTS = 50
 # K = 0.8
 # TOTAL_DEMAND = int(NUM_AGENTS*K)
 # #NUM_TASKS = 4

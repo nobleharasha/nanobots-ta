@@ -34,7 +34,8 @@ class VertexState:
 
 		self.num_bound = 0
 
-		self.fuel = 0
+		d = l2_distance(loc[0], loc[1], int(M / 2), int(N / 2))
+		self.fuel = max(-1 * (d - 20) * (d + 20) * (10 / 20**2), 0 )
 
 		self.residual_fuel = self.fuel
 		#self.fuel = random.randint(0,10)
