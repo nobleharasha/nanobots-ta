@@ -71,28 +71,56 @@ class Agent:
 
 	def generate_transition(self, local_vertex_mapping, P):
 		new_agent_state = copy.copy(self.state)
-		self.location.state.visits += 1
 
 
-		if new_agent_state.bound:
-			new_dir = "S"
-		elif self.location.state.cancer:
-			new_agent_state.bound = True
-			self.location.state.num_bound += 1
-			new_dir = "S"
-		else:
-			if self.location.state.fuel > 0:
-				if random.random() <= self.location.state.fuel:
-					new_dir = get_direction_from_destination( (int(M / 2), int(N / 2)), (self.location.x, self.location.y) )
-					if random.random() <= 0.1:
-						new_dir = random.choice(["U", "D", "L", "R"])
-				else:
-					new_dir = "S"
+		if self.location.state.fuel > 0:
+			others = ["U", "D", "L", "R"]
+			dir_to_target = get_direction_from_destination((int(M / 2), int(N / 2)), self.location.coords())
+			if dir_to_target == "S":
+				new_dir = random.choice(["U", "D", "L", "R"])
 			else:
-				if random.random() <= 0.1:
-					new_dir = random.choice(["U", "D", "L", "R"])
+				others.remove(dir_to_target)
+				others.remove(dir_to_opp[dir_to_target])
+				prob_num = random.random()
+				if prob_num <= 0.5:
+					new_dir = dir_to_target
+				elif prob_num <= 0.7:
+					new_dir = others[0]
+				elif prob_num <= 0.9:
+					new_dir = others[1]
 				else:
-					new_dir = "S"
+					new_dir = dir_to_opp[dir_to_target]
+		else:
+			new_dir = random.choice(["U", "D", "L", "R"])
+
+
+
+
+
+
+
+		# self.location.state.visits += 1
+		#
+		#
+		# if new_agent_state.bound:
+		# 	new_dir = "S"
+		# elif self.location.state.cancer:
+		# 	new_agent_state.bound = True
+		# 	self.location.state.num_bound += 1
+		# 	new_dir = "S"
+		# else:
+		# 	if self.location.state.fuel > 0:
+		# 		if random.random() <= self.location.state.fuel:
+		# 			new_dir = get_direction_from_destination( (int(M / 2), int(N / 2)), (self.location.x, self.location.y) )
+		# 			if random.random() <= 0.1:
+		# 				new_dir = random.choice(["U", "D", "L", "R"])
+		# 		else:
+		# 			new_dir = "S"
+		# 	else:
+		# 		if random.random() <= 0.1:
+		# 			new_dir = random.choice(["U", "D", "L", "R"])
+		# 		else:
+		# 			new_dir = "S"
 
 
 

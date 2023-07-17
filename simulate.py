@@ -11,6 +11,7 @@ from VertexState import VertexState
 import multiprocessing as mp
 from matplotlib import pyplot as plt
 import numpy as np
+from geo_utils import l2_distance
 
 
 def main():
@@ -27,9 +28,16 @@ def main():
     if graphics_on:
         vc = ViewController(configuration)
     ct = 0
-    while configuration.vertices[(int(M / 2), int(N / 2))].state.num_bound <= NUM_AGENTS:
+    dispersion_vals = []
+    while ct <= 1000:
         ct+=1
         configuration.transition()
+
+        dispersion = 0
+        for x in range(M):
+            for y in range(N):
+                dispersion += len(configuration.vertices[(x,y)].agents) * l2_distance(x, y, int(M / 2), int(N / 2))
+        dispersion_vals.append(dispersion)
 
         if graphics_on:
             vc.update()
@@ -56,7 +64,7 @@ def main():
     #
     # return fuel_to_visits_avg
 
-    return ct
+    return dispersion_vals
 
 
 if __name__ == "__main__":
