@@ -69,27 +69,66 @@ class Agent:
 
 
 
-	def generate_transition(self, local_vertex_mapping, P):
+	def generate_transition(self, local_vertex_mapping, alg, scaling):
 		new_agent_state = copy.copy(self.state)
 
-
-		if self.location.state.fuel > 0:
-			others = ["U", "D", "L", "R"]
-			dir_to_target = get_direction_from_destination((int(M / 2), int(N / 2)), self.location.coords())
-			if dir_to_target == "S":
-				new_dir = random.choice(["U", "D", "L", "R"])
-			else:
-				others.remove(dir_to_target)
-				others.remove(dir_to_opp[dir_to_target])
-				prob_num = random.random()
-				if prob_num <= 0.5:
-					new_dir = dir_to_target
-				elif prob_num <= 0.7:
-					new_dir = others[0]
-				elif prob_num <= 0.9:
-					new_dir = others[1]
+		if alg == "ORIENTATION BIAS":
+			if self.location.state.fuel > 0:
+				others = ["U", "D", "L", "R"]
+				dir_to_target = get_direction_from_destination((int(M / 2), int(N / 2)), self.location.coords())
+				if dir_to_target == "S":
+					new_dir = random.choice(["U", "D", "L", "R"])
 				else:
-					new_dir = dir_to_opp[dir_to_target]
+					others.remove(dir_to_target)
+					others.remove(dir_to_opp[dir_to_target])
+					prob_num = random.random()
+					turns = [1, 1, 1, 1]
+					turns[0] += scaling[0] * self.location.state.fuel
+					turns[1] -= scaling[1] * self.location.state.fuel
+					turns_n = [x / sum(turns) for x in turns]
+					#print(turns_n)
+					if prob_num <= turns_n[0]:
+						new_dir = dir_to_target
+					elif prob_num <= turns_n[0] + turns_n[2]:
+						new_dir = others[0]
+					elif prob_num <= turns_n[0] + turns_n[2] + turns_n[3]:
+						new_dir = others[1]
+					else:
+						new_dir = dir_to_opp[dir_to_target]
+			else:
+				new_dir = random.choice(["U", "D", "L", "R"])
+
+		elif alg == "VELOCITY BIAS":
+			if new_agent_state.ct > 0:
+				new_dir = new_agent_state.curr_dir
+				new_agent_state.ct -= 1
+			elif self.location.state.fuel > 0:
+				new_agent_state.curr_dir = random.choice(["U", "D", "L", "R"])
+				new_dir = "S"
+				dir_to_target = get_direction_from_destination((int(M / 2), int(N / 2)), self.location.coords())
+				steps = [1, 1, 1]
+				steps[0] += int(scaling[0] * self.location.state.fuel)
+				steps[2] += int(scaling[1] * self.location.state.fuel)
+				#print(steps)
+				if new_agent_state.curr_dir == dir_to_target:
+					new_agent_state.ct = steps[0]
+				elif new_agent_state.curr_dir == dir_to_opp[dir_to_target]:
+					new_agent_state.ct = steps[1]
+				else:
+					new_agent_state.ct = steps[2]
+			else:
+				new_agent_state.curr_dir = random.choice(["U", "D", "L", "R"])
+				new_dir = new_agent_state.curr_dir
+				new_agent_state.ct = 0
+
+		elif alg == "CONFINED RW":
+			mark = self.location.state.fuel > 0
+			if not mark and new_agent_state.prev[1]:
+				new_dir = dir_to_opp[new_agent_state.prev[0]]
+			else:
+				new_dir = random.choice(["U", "D", "L", "R"])
+			new_agent_state.prev = (new_dir, mark)
+
 		else:
 			new_dir = random.choice(["U", "D", "L", "R"])
 

@@ -47,7 +47,7 @@ class ViewController:
 				rect = pygame.Rect(x*self.VERTEX_SIZE+1, self.WINDOW_HEIGHT-y*self.VERTEX_SIZE-self.VERTEX_SIZE+1, self.VERTEX_SIZE-2, self.VERTEX_SIZE-2)
 
 				num_agents = len([_ for _ in self.configuration.vertices[(x,y)].agents if not _.state.bound])
-				fuel_m = min(self.configuration.vertices[(x,y)].state.fuel / 10, 1)
+				fuel_m = min(self.configuration.vertices[(x,y)].state.fuel / 1, 1)
 
 				if (x, y) == (int(M / 2), int(N / 2)):
 					pygame.draw.rect(self.SCREEN, self.YELLOW, rect, 0)

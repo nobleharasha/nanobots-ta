@@ -56,7 +56,7 @@ class Configuration:
 		True if the grid is a torus, False if we are considering
 		edge effects
 	"""
-	def __init__(self, N, M, P, torus=False, pool = None):
+	def __init__(self, N, M, alg="ORIENTATION BIAS", scaling=(1,0.5), torus=False, pool = None):
 		# Create all vertices
 		self.vertices = {}
 		for x in range(M):
@@ -70,7 +70,9 @@ class Configuration:
 		self.drug_visits_peragent = {}
 		self.pool = pool
 
-		self.P = P
+		self.alg = alg
+		self.scaling = scaling
+
 
 
 	def add_agents(self, agent_locations):
@@ -137,7 +139,7 @@ class Configuration:
 		# 				global_beacon_locations.add((x,y))
 
 		for agent in vertex.agents:
-			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping, self.P)
+			proposed_vertex_state, proposed_agent_state, direction = agent.generate_transition(local_vertex_mapping, self.alg, self.scaling)
 
 			proposed_vertex_states[agent.state.id] = proposed_vertex_state
 			proposed_agent_updates[agent.state.id] = AgentTransition(proposed_agent_state, direction)
